@@ -3,7 +3,7 @@
 Loosely-coupled collection of quick-and-dirty experiments.
 
 Create one sub-folder per experiment, each with their own `README.md` and
-`LICENSE`, or default to the Apache 2.0 license which otherwise coders this
+`LICENSE`, or default to the Apache 2.0 license which otherwise covers this
 repository.
 
 Make sure that any third party code used in your experiments is contained in the
