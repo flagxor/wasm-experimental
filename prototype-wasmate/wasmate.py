@@ -189,7 +189,7 @@ def handle_mnemonic(command, args):
         assert len(expr_stack) == 0
         push_label(args[0][1:]) # strip leading $
     elif command == 'set_local':
-        assert args[1] == '@pop'
+        assert args[1] == 'pop'
         print current_indent + '(set_local ' + args[0] + ' ' + expr_stack.pop() + ')'
         assert len(expr_stack) == 0
     elif command in ['brif', 'br', 'switch', 'return'] or command.startswith('store_'):
