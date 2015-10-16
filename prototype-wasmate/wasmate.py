@@ -198,7 +198,7 @@ def handle_mnemonic(command, args):
         assert args[1] == 'pop'
         print current_indent + '(set_local ' + args[0] + ' ' + expr_stack.pop() + ')'
         assert len(expr_stack) == 0
-    elif command in ['brif', 'br', 'switch', 'return'] or command.startswith('store_'):
+    elif command in ['brif', 'br', 'switch', 'return'] or command.endswith('store'):
         print current_indent + sexprify(command, args)
         assert len(expr_stack) == 0
     elif command == 'call' and args[0] in ['$print_i32', '$print_f32',
