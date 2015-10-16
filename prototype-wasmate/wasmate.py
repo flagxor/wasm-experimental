@@ -71,8 +71,11 @@ def handle_dot_directive(command, args, rest):
         current_section = ".text"
     elif command == 'data':
         current_section = ".data"
-    elif command in ['file', 'globl', 'type']:
+    elif command in ['file', 'type']:
         pass
+    elif command == 'globl':
+        if current_pass == 'text':
+            print current_indent + '(export "' + args[0] + '" $' + args[0] + ')'
     elif command == 'param':
         if current_pass == 'text':
             print current_indent + '(param ' + args[0] + ')'
