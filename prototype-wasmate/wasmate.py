@@ -79,6 +79,9 @@ def handle_dot_directive(command, args, rest):
     elif command == 'result':
         if current_pass == 'text':
             print current_indent + '(result ' + args[0] + ')'
+    elif command == 'local':
+        if current_pass == 'text':
+            print current_indent + '(local ' + ' '.join(args) + ')'
     elif command == 'size':
         if current_pass == 'text' and current_section == '.text':
             assert args[0] == current_function
