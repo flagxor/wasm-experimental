@@ -12,19 +12,15 @@ resolved. This currently only works on single-file programs. Note: this is
 a hack. A real linker will eventually be needed.""")
   parser.add_argument('-o', '--output', type=str, default=None,
                       help='output `.wasm` s-expression file')
-  parser.add_argument('inputs', nargs=argparse.REMAINDER,
-                      help='input `.wack` LLVM  assembly files')
+  parser.add_argument('input', metavar='INPUT', nargs='?',
+                      help='input `.wack` LLVM assembly file')
   return parser.parse_args()
 
-def readInputs(input_files):
-  """Read LLVM inputs from the files specified, or stdin."""
-  if len(input_files) == 0:
+def readInput(input_file):
+  """Read LLVM input from the file specified, or stdin."""
+  if input_file is None:
     return sys.stdin.read().splitlines()
-  if len(input_files) != 1:
-    sys.stderr.write('Only one input file currently supported, got: [' +
-                     ', '.join(input_files) + ']\n')
-    sys.exit(1)
-  return open(input_files[0], 'rb').readlines()
+  return open(input_file, 'rb').readlines()
 
 out = ''
 def writeOutput(string, newline=True):
@@ -212,6 +208,16 @@ def handle_mnemonic(command, args):
         expr_stack[0].startswith('(call')):
         writeOutput(current_indent + expr_stack.pop())
 
+    # TODO(jfb): fix this in llvm
+    if command.endswith('return'):
+      # change <type>.return -> return
+      command = 'return'
+    elif command.endswith('call'):
+      # change <type>.call -> call
+      command = 'call'
+    elif command == 'brif':
+      command = 'br_if'
+
     if command == 'block':
         writeOutput(current_indent + '(block ' + args[0])
         assert len(expr_stack) == 0
@@ -225,7 +231,7 @@ def handle_mnemonic(command, args):
         writeOutput(current_indent + '(set_local ' + args[0] + ' ' +
                     expr_stack.pop() + ')')
         assert len(expr_stack) == 0
-    elif (command in ['brif', 'br', 'switch', 'return'] or
+    elif (command in ['br_if', 'br', 'switch', 'return'] or
           command.endswith('store')):
         writeOutput(current_indent + sexprify(command, args))
         assert len(expr_stack) == 0
@@ -237,7 +243,7 @@ def handle_mnemonic(command, args):
 
 def Main():
   cmd_args = ParseArgs()
-  all_lines = readInputs(cmd_args.inputs)
+  all_lines = readInput(cmd_args.input)
 
   global current_indent
   global current_pass
@@ -307,22 +313,24 @@ def Main():
   writeOutput((current_indent + '(memory ' + str(len(data_data)) + ' ' +
                str(len(data_data))))
   current_indent += '  '
-  writeOutput(current_indent + '(segment ' + str(len(data_data)))
+  writeOutput(current_indent + '(segment 0')
   current_indent += '  '
   writeOutput(current_indent + '"', newline=False)
   for c in data_data:
     if c == '\n':
-      writeOutput('\\n', newline=False)
+      s = '\\n'
     elif c == '\t':
-      writeOutput('\\t', newline=False)
-    elif c == '\0':
-      writeOutput('\\0', newline=False)
+      s = '\\t'
     elif c == '\\':
-      writeOutput('\\\\', newline=False)
+      s = '\\\\'
     elif c == '\'':
-      writeOutput('\\\'', newline=False)
+      s = '\\\''
+    elif ord(c) >= 32 and ord(c) < 127:
+      # ASCII printable
+      s = c
     else:
-      writeOutput(c, newline=False)
+      s = '\\%02x' % ord(c)
+    writeOutput(s, newline=False)
 
   writeOutput('"')
   current_indent = current_indent[:-2]
