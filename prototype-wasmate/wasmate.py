@@ -208,16 +208,6 @@ def handle_mnemonic(command, args):
         expr_stack[0].startswith('(call')):
         writeOutput(current_indent + expr_stack.pop())
 
-    # TODO(jfb): fix this in llvm
-    if command.endswith('return'):
-      # change <type>.return -> return
-      command = 'return'
-    elif command.endswith('call'):
-      # change <type>.call -> call
-      command = 'call'
-    elif command == 'brif':
-      command = 'br_if'
-
     if command == 'block':
         writeOutput(current_indent + '(block ' + args[0])
         assert len(expr_stack) == 0
