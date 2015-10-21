@@ -36,6 +36,8 @@ current_function_number = 0
 current_indent = ''
 data_labels = {}
 data_data = []
+imports = []
+import_funs = []
 expr_stack = []
 block_labels = {}
 
@@ -43,6 +45,10 @@ def error(message):
     sys.stderr.write('error at line ' + str(current_line_number) + ': ' +
                      message)
     sys.exit(1)
+
+def register_import(i):
+  imports.append(i)
+  import_funs.append(i[0:i.find(' ')])
 
 def push_label(label):
     if block_labels.has_key(label):
@@ -91,6 +97,8 @@ def handle_dot_directive(command, args, rest):
         current_section = ".text"
     elif command == 'data':
         current_section = ".data"
+    elif command == 'imports':
+      current_section = 'imports'
     elif command in ['file', 'type']:
         pass
     elif command == 'globl':
@@ -158,6 +166,9 @@ def handle_dot_directive(command, args, rest):
             handle_label(name, [])
             for i in range(0, size):
                 data_data.append('\0')
+    elif command == 'import':
+        if current_pass == 'imports':
+            register_import(args[0])
     else:
         error("unknown dot command: ." + command)
 
@@ -225,8 +236,7 @@ def handle_mnemonic(command, args):
           command.endswith('store')):
         writeOutput(current_indent + sexprify(command, args))
         assert len(expr_stack) == 0
-    elif command == 'call' and args[0] in ['$print_i32', '$print_f32',
-                                           '$print_i64', '$print_f64']:
+    elif command == 'call' and args[0] in import_funs:
         expr_stack.append(sexprify('call_import', args))
     else:
         expr_stack.append(sexprify(command, args))
@@ -246,16 +256,19 @@ def Main():
   writeOutput(current_indent + '(module')
   current_indent += '  '
 
-  # Import what little we can.
-  writeOutput(current_indent + '(import $print_i32 "stdio" "print" (param i32))')
-  writeOutput(current_indent + '(import $print_f32 "stdio" "print" (param f32))')
-  writeOutput(current_indent + '(import $print_i64 "stdio" "print" (param i64))')
-  writeOutput(current_indent + '(import $print_f64 "stdio" "print" (param f64))')
+  # Built-in imports.
+  [register_import(i) for i in
+   ['$print_i32 "stdio" "print" (param i32)',
+    '$print_f32 "stdio" "print" (param f32)',
+    '$print_i64 "stdio" "print" (param i64)',
+    '$print_f64 "stdio" "print" (param f64)']]
 
-  # Make two passes over the code: once to read all the data directives, and
-  # then once to process all the text. This lets us resolve all the data
-  # symbols so we can plug in absolute offsets into the text.
-  for current_pass in ['data', 'text']:
+  # Make three passes over the code: once to read all the data directives, once
+  # to process all the text, and once for all the imports. This lets us resolve
+  # all the data symbols so we can plug in absolute offsets into the text, while
+  # having all the imports on top (which then lets us transform call to
+  # call_import).
+  for current_pass in ['data', 'imports', 'text']:
     current_line_number = 0
     current_section = ".text"
     current_label = None
@@ -298,6 +311,9 @@ def Main():
         handle_mnemonic(command, args)
 
       current_line_number += 1
+
+    if current_pass == 'imports':
+      [writeOutput(current_indent + '(import ' + i + ')') for i in imports]
 
   # Print the data segment.
   writeOutput((current_indent + '(memory ' + str(len(data_data)) + ' ' +
