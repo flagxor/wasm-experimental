@@ -184,6 +184,7 @@ def handle_label(labelname, args):
             pass
         else:
             if block_labels.has_key(labelname):
+                handle_void_call()
                 for i in range(0, block_labels[labelname]):
                     writeOutput(current_indent + ')')
             block_labels[labelname] = 0
@@ -211,13 +212,16 @@ def sexprify(command, args):
     s += ')'
     return s
 
+def handle_void_call():
+    if len(expr_stack) != 0 and expr_stack[0].startswith('(call'):
+        writeOutput(current_indent + expr_stack.pop())
+
 # Handle an instruction mnemonic line.
 def handle_mnemonic(command, args):
     # Hack: We don't know call signatures, so we don't know that void calls
     # don't push anything onto the stack.
-    if (command != 'set_local' and len(expr_stack) != 0 and
-        expr_stack[0].startswith('(call')):
-        writeOutput(current_indent + expr_stack.pop())
+    if command != 'set_local':
+        handle_void_call()
 
     if command == 'block':
         writeOutput(current_indent + '(block ' + args[0])
