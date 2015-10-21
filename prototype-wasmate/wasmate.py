@@ -223,6 +223,10 @@ def handle_mnemonic(command, args):
     if command != 'set_local':
         handle_void_call()
 
+    # TODO(jfb): fix in LLVM
+    if command.endswith('.srem'):
+        command = command.replace('.srem', '.rem_s')
+
     if command == 'block':
         writeOutput(current_indent + '(block ' + args[0])
         assert len(expr_stack) == 0
@@ -305,6 +309,10 @@ def Main():
       else:
         rest = ''
         args = []
+
+      # TODO(jfb): fix this in LLVM
+      if command == '.br_if':
+        command = 'br_if'
 
       # Decide what to do.
       if command[-1] == ':':
