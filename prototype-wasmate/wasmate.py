@@ -148,6 +148,11 @@ def handle_dot_directive(command, args, rest):
             data_data.append(chr((x >> 40) & 255))
             data_data.append(chr((x >> 48) & 255))
             data_data.append(chr((x >> 56) & 255))
+    elif command == 'zero':
+        if current_pass == 'data':
+            size = int(args[0])
+            for i in range(size):
+                data_data.append('\0')
     elif command == 'asciz':
         # Strings can contain embedded commas, so as a hack, pass the rest
         # of the line as a single argument.
@@ -236,8 +241,7 @@ def handle_mnemonic(command, args):
         writeOutput(current_indent + '(set_local ' + args[0] + ' ' +
                     expr_stack.pop() + ')')
         assert len(expr_stack) == 0
-    elif (command in ['br_if', 'br', 'switch', 'return'] or
-          command.endswith('store')):
+    elif (command in ['br_if', 'br', 'switch', 'return'] or 'store' in command):
         writeOutput(current_indent + sexprify(command, args))
         assert len(expr_stack) == 0
     elif command == 'call' and args[0] in import_funs:
