@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import argparse
+import re
 import sys
 
 def ParseArgs():
@@ -46,9 +47,39 @@ def error(message):
                      message)
     sys.exit(1)
 
+sig_element_match = re.compile(r'(\((param|result) ([^\)]+)\))')
+
+# For functions with more than one parameter, LLVM is currently generating:
+# (param i32) (param i32) (result i32)
+# when it should really be generating:
+# (param i32 i32) (result i32)
+# Do some string manipulation to fix this, but make sure we will accept the
+# correct input, too.
+def massage_import(text):
+    params = []
+    results = []
+    for _, which, types in sig_element_match.findall(text):
+        # Accumulate the types being declared.
+        if which == "param":
+            params.extend(types.split())
+        elif which == "result":
+            results.extend(types.split())
+        else:
+            raise NotImplementedError(which)
+    # Remove the original param and result declarations.
+    text = sig_element_match.sub("", text).strip()
+    # Recreate the params.
+    if params:
+        text = "%s (param %s)" % (text, " ".join(params))
+    # Recreate the results.
+    if results:
+        text = "%s (result %s)" % (text, " ".join(results))
+    return text
+
 def register_import(i):
-  imports.append(i)
-  import_funs.append(i[0:i.find(' ')])
+    i = massage_import(i)
+    imports.append(i)
+    import_funs.append(i[0:i.find(' ')])
 
 def push_label(label):
     if block_labels.has_key(label):
