@@ -103,8 +103,12 @@ def handle_dot_directive(command, args, rest):
         pass
     elif command == 'globl':
         if current_pass == 'text':
-            writeOutput(current_indent + '(export "' + args[0] + '" $' + args[0]
-                        + ')')
+            # A .globl statement could be declaring a name for either a global
+            # variable or a function. We only want to export functions, so
+            # filter out global variables.
+            if args[0] not in data_labels:
+              writeOutput(current_indent + '(export "' + args[0] + '" $'
+                          + args[0] + ')')
     elif command == 'param':
         if current_pass == 'text':
             writeOutput(current_indent + '(param ' + args[0] + ')')
