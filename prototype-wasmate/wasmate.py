@@ -299,13 +299,6 @@ def Main():
   writeOutput(current_indent + '(module')
   current_indent += '  '
 
-  # Built-in imports.
-  [register_import(i) for i in
-   ['$print_i32 "stdio" "print" (param i32)',
-    '$print_f32 "stdio" "print" (param f32)',
-    '$print_i64 "stdio" "print" (param i64)',
-    '$print_f64 "stdio" "print" (param f64)']]
-
   # Make three passes over the code: once to read all the data directives, once
   # to process all the text, and once for all the imports. This lets us resolve
   # all the data symbols so we can plug in absolute offsets into the text, while
