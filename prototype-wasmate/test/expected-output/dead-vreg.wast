@@ -1,0 +1,50 @@
+(module
+  (export "foo" $foo)
+  (func $foo
+    (param i32)
+    (param i32)
+    (param i32)
+    (local i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32 i32)
+    (block $BB0_5
+    (set_local 16 (get_local 2))
+    (set_local 17 (i32.const 1))
+    (set_local 18 (i32.lt_s (get_local 16) (get_local 17)))
+    (br_if $BB0_5 (get_local 18))
+    (set_local 15 (get_local 1))
+    (set_local 30 (get_local 0))
+    (set_local 20 (i32.const 2))
+    (set_local 19 (i32.const 0))
+    (set_local 3 (i32.shl (get_local 15) (get_local 20)))
+    (set_local 31 (get_local 19))
+    (loop $BB0_2
+    (block $BB0_4
+    (set_local 23 (i32.lt_s (get_local 15) (get_local 17)))
+    (set_local 32 (get_local 19))
+    (set_local 33 (get_local 30))
+    (set_local 34 (get_local 15))
+    (br_if $BB0_4 (get_local 23))
+    (loop $BB0_3
+    (i32.store (get_local 33) (get_local 32))
+    (set_local 24 (i32.const -1))
+    (set_local 34 (i32.add (get_local 34) (get_local 24)))
+    (set_local 25 (i32.const 4))
+    (set_local 33 (i32.add (get_local 33) (get_local 25)))
+    (set_local 32 (i32.add (get_local 32) (get_local 31)))
+    (set_local 27 (i32.ne (get_local 34) (get_local 19)))
+    (br_if $BB0_3 (get_local 27))
+    )
+    )
+    (set_local 31 (i32.add (get_local 31) (get_local 17)))
+    (set_local 30 (i32.add (get_local 30) (get_local 3)))
+    (set_local 29 (i32.ne (get_local 31) (get_local 16)))
+    (br_if $BB0_2 (get_local 29))
+    )
+    )
+    (return)
+  )
+  (memory 0 0
+    (segment 0
+      ""
+    )
+  )
+)
