@@ -89,7 +89,7 @@ def push_label(label):
 
 def align_data_to(align):
     while len(data_data) % align != 0:
-        data_data.append(0)
+        data_data.append('\0')
 
 def handle_dot_asciz(rest):
     if current_pass == 'data':
@@ -263,6 +263,14 @@ def handle_mnemonic(command, args):
     if command != 'set_local':
         handle_void_call()
 
+    # TODO(binji): LLVM outputs types for some commands that shouldn't have
+    # them. Fix this upstream.
+    split = command.split('.')
+    if len(split) == 2:
+        if split[1] in ('call_indirect', 'page_size', 'memory_size',
+                        'resize_memory', 'switch'):
+            command = split[1]
+
     if command == 'block':
         writeOutput(current_indent + '(block ' + args[0])
         assert len(expr_stack) == 0
@@ -276,7 +284,8 @@ def handle_mnemonic(command, args):
         writeOutput(current_indent + '(set_local ' + args[0] + ' ' +
                     expr_stack.pop() + ')')
         assert len(expr_stack) == 0
-    elif (command in ['br_if', 'br', 'switch', 'return'] or 'store' in command):
+    elif (command in ['br_if', 'br', 'switch', 'return', 'resize_memory'] or
+          'store' in command):
         writeOutput(current_indent + sexprify(command, args))
         assert len(expr_stack) == 0
     elif command == 'call' and args[0] in import_funs:

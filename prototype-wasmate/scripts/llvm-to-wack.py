@@ -57,7 +57,10 @@ def main(args):
         run_line = GetRunLine(ll_test)
         cmd = shlex.split(run_line)
         cmd.extend([ll_test, '-o', wack])
-        # First arg is llc or opt, replace it with one in our BIN_DIR
+        # Don't run if the command isn't llc. Some are opt and they don't
+        # generate .wack files.
+        if cmd[0] != 'llc':
+            continue
         cmd[0] = os.path.join(BIN_DIR, cmd[0])
         subprocess.check_call(cmd)
 
