@@ -124,6 +124,7 @@ def handle_dot_directive(command, args, rest):
     global current_function_number
     global current_section
     global current_indent
+
     if command == 'text':
         current_section = ".text"
     elif command == 'data':
@@ -220,11 +221,11 @@ def handle_label(labelname, args):
     if len(args) != 0:
         error("label with args")
     if current_pass == "text" and current_function != None:
+        handle_void_call()
         if labelname.startswith('func_end'):
             pass
         else:
             if block_labels.has_key(labelname):
-                handle_void_call()
                 for i in range(0, block_labels[labelname]):
                     writeOutput(current_indent + ')')
             block_labels[labelname] = 0
