@@ -294,16 +294,100 @@ def handle_mnemonic(command, args):
     else:
         expr_stack.append(sexprify(command, args))
 
+def cleanup_line(line):
+    # Traslate '# BB#0:' comments into proper BBx_0: labels. This hack is
+    # needed because loops in LLVM output reference the block after the
+    # loop, which LLVM doesn't emit a proper label for if it's only
+    # reachable by fallthrough.
+    if line.startswith('# BB#'):
+        line = 'BB' + str(current_function_number) + '_' + line[5:]
+
+    # Strip comments.
+    x = line.find('#')
+    if x != -1:
+        line = line[0:x]
+    return line.strip()
+
+def parse_line(line):
+    # Split out the first part of the line, which determines what we do.
+    parts = line.split(None, 1)
+    command = parts[0]
+
+    # The rest of the line is comma-separated args.
+    if len(parts) > 1:
+        rest = parts[1]
+        args = [x.strip() for x in rest.split(',')]
+    else:
+        rest = ''
+        args = []
+
+    return command, args, rest
+
+def do_pass(pass_name, all_lines):
+    global current_pass
+    global current_line_number
+    global current_section
+    global current_label
+    global block_labels
+
+    current_pass = pass_name
+    current_line_number = 0
+    current_section = ".text"
+    current_label = None
+    block_labels = {}
+
+    for line in all_lines:
+        line = cleanup_line(line)
+        if not line:
+            continue
+        command, args, rest = parse_line(line)
+
+        # Decide what to do.
+        if command[-1] == ':':
+            handle_label(command[:-1], args)
+        elif command[0] == '.':
+            handle_dot_directive(command[1:], args, rest)
+        elif current_pass == 'text':
+            handle_mnemonic(command, args)
+
+        current_line_number += 1
+
+def write_data_segment():
+    global current_indent
+
+    writeOutput((current_indent + '(memory ' + str(len(data_data)) + ' ' +
+                 str(len(data_data))))
+    current_indent += '  '
+    writeOutput(current_indent + '(segment 0')
+    current_indent += '  '
+    writeOutput(current_indent + '"', newline=False)
+    for c in data_data:
+        if c == '\n':
+            s = '\\n'
+        elif c == '\t':
+            s = '\\t'
+        elif c == '\\':
+            s = '\\\\'
+        elif c == '\'':
+            s = '\\\''
+        elif ord(c) >= 32 and ord(c) < 127:
+            # ASCII printable
+            s = c
+        else:
+          s = '\\%02x' % ord(c)
+        writeOutput(s, newline=False)
+
+    writeOutput('"')
+    current_indent = current_indent[:-2]
+    writeOutput(current_indent + ')')
+    current_indent = current_indent[:-2]
+    writeOutput(current_indent + ')')
+
 def Main():
   cmd_args = ParseArgs()
   all_lines = readInput(cmd_args.input)
 
   global current_indent
-  global current_pass
-  global current_line_number
-  global current_section
-  global current_label
-  global block_labels
 
   # Open a module.
   writeOutput(current_indent + '(module')
@@ -314,81 +398,13 @@ def Main():
   # all the data symbols so we can plug in absolute offsets into the text, while
   # having all the imports on top (which then lets us transform call to
   # call_import).
-  for current_pass in ['data', 'imports', 'text']:
-    current_line_number = 0
-    current_section = ".text"
-    current_label = None
-    block_labels = {}
-    for line in all_lines:
-      # Traslate '# BB#0:' comments into proper BBx_0: labels. This hack is
-      # needed because loops in LLVM output reference the block after the
-      # loop, which LLVM doesn't emit a proper label for if it's only
-      # reachable by fallthrough.
-      if line.startswith('# BB#'):
-        line = 'BB' + str(current_function_number) + '_' + line[5:]
+  do_pass('data', all_lines)
+  do_pass('imports', all_lines)
+  for i in imports:
+      writeOutput(current_indent + '(import ' + i + ')')
+  do_pass('text', all_lines)
 
-      # Strip comments.
-      x = line.find('#')
-      if x != -1:
-        line = line[0:x]
-
-      # Split out the first part of the line, which determines what we do.
-      parts = line.split(None, 1)
-      if len(parts) == 0:
-        continue
-      command = parts[0]
-      if len(command) == 0:
-        continue
-
-      # The rest of the line is comma-separated args.
-      if len(parts) > 1:
-        rest = parts[1].strip()
-        args = [x.strip() for x in rest.split(',')]
-      else:
-        rest = ''
-        args = []
-
-      # Decide what to do.
-      if command[-1] == ':':
-        handle_label(command[:-1], args)
-      elif command[0] == '.':
-        handle_dot_directive(command[1:], args, rest)
-      elif current_pass == 'text':
-        handle_mnemonic(command, args)
-
-      current_line_number += 1
-
-    if current_pass == 'imports':
-      [writeOutput(current_indent + '(import ' + i + ')') for i in imports]
-
-  # Print the data segment.
-  writeOutput((current_indent + '(memory ' + str(len(data_data)) + ' ' +
-               str(len(data_data))))
-  current_indent += '  '
-  writeOutput(current_indent + '(segment 0')
-  current_indent += '  '
-  writeOutput(current_indent + '"', newline=False)
-  for c in data_data:
-    if c == '\n':
-      s = '\\n'
-    elif c == '\t':
-      s = '\\t'
-    elif c == '\\':
-      s = '\\\\'
-    elif c == '\'':
-      s = '\\\''
-    elif ord(c) >= 32 and ord(c) < 127:
-      # ASCII printable
-      s = c
-    else:
-      s = '\\%02x' % ord(c)
-    writeOutput(s, newline=False)
-
-  writeOutput('"')
-  current_indent = current_indent[:-2]
-  writeOutput(current_indent + ')')
-  current_indent = current_indent[:-2]
-  writeOutput(current_indent + ')')
+  write_data_segment()
 
   # Close the module.
   current_indent = current_indent[:-2]
