@@ -7,11 +7,11 @@ fadd32:
 	.param f32
 	.result f32
 	.local f32, f32, f32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f32.add (get_local 3), (get_local 2)
+	f32.add push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end0:
@@ -24,11 +24,11 @@ fsub32:
 	.param f32
 	.result f32
 	.local f32, f32, f32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f32.sub (get_local 3), (get_local 2)
+	f32.sub push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end1:
@@ -41,11 +41,11 @@ fmul32:
 	.param f32
 	.result f32
 	.local f32, f32, f32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f32.mul (get_local 3), (get_local 2)
+	f32.mul push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end2:
@@ -58,11 +58,11 @@ fdiv32:
 	.param f32
 	.result f32
 	.local f32, f32, f32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f32.div (get_local 3), (get_local 2)
+	f32.div push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end3:
@@ -74,9 +74,9 @@ fabs32:
 	.param f32
 	.result f32
 	.local f32, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.abs (get_local 1)
+	f32.abs push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end4:
@@ -88,9 +88,9 @@ fneg32:
 	.param f32
 	.result f32
 	.local f32, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.neg (get_local 1)
+	f32.neg push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end5:
@@ -103,11 +103,11 @@ copysign32:
 	.param f32
 	.result f32
 	.local f32, f32, f32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f32.copysign (get_local 3), (get_local 2)
+	f32.copysign push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end6:
@@ -119,9 +119,9 @@ sqrt32:
 	.param f32
 	.result f32
 	.local f32, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.sqrt (get_local 1)
+	f32.sqrt push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end7:
@@ -133,9 +133,9 @@ ceil32:
 	.param f32
 	.result f32
 	.local f32, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.ceil (get_local 1)
+	f32.ceil push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end8:
@@ -147,9 +147,9 @@ floor32:
 	.param f32
 	.result f32
 	.local f32, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.floor (get_local 1)
+	f32.floor push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end9:
@@ -161,9 +161,9 @@ trunc32:
 	.param f32
 	.result f32
 	.local f32, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.trunc (get_local 1)
+	f32.trunc push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end10:
@@ -175,9 +175,9 @@ nearest32:
 	.param f32
 	.result f32
 	.local f32, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.nearest (get_local 1)
+	f32.nearest push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end11:
@@ -189,9 +189,9 @@ nearest32_via_rint:
 	.param f32
 	.result f32
 	.local f32, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.nearest (get_local 1)
+	f32.nearest push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end12:

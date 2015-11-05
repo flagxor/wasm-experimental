@@ -6,9 +6,9 @@ ldi32:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.load (get_local 1)
+	i32.load push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end0:
@@ -20,9 +20,9 @@ ldi64:
 	.param i32
 	.result i64
 	.local i32, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.load (get_local 1)
+	i64.load push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end1:
@@ -34,9 +34,9 @@ ldf32:
 	.param i32
 	.result f32
 	.local i32, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.load (get_local 1)
+	f32.load push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end2:
@@ -48,9 +48,9 @@ ldf64:
 	.param i32
 	.result f64
 	.local i32, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.load (get_local 1)
+	f64.load push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end3:

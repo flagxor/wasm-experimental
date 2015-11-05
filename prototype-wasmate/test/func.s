@@ -12,7 +12,7 @@ func_end0:
 f1:
 	.result i32
 	.local i32
-	i32.const 0
+	i32.const push, 0
 	set_local 0, pop
 	return (get_local 0)
 func_end1:
@@ -25,7 +25,7 @@ f2:
 	.param f32
 	.result i32
 	.local i32
-	i32.const 0
+	i32.const push, 0
 	set_local 2, pop
 	return (get_local 2)
 func_end2:

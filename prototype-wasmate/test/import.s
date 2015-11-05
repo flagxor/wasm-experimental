@@ -6,13 +6,13 @@ f:
 	.param i32
 	.param f32
 	.local f32, i32, i32, f32
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	call $printi, (get_local 3)
+	call $printi, push, (get_local 3)
 	set_local 4, pop
-	call $printf, (get_local 2)
+	call $printf, push, (get_local 2)
 	set_local 5, pop
 	call $printv
 	return

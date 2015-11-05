@@ -12,11 +12,11 @@ bar32:
 	block $BB0_4
 	block $BB0_3
 	block $BB0_2
-	get_local 0
+	get_local push, 0
 	set_local 2, pop
-	i32.const 23
+	i32.const push, 23
 	set_local 3, pop
-	i32.gt_u (get_local 2), (get_local 3)
+	i32.gt_u push, (get_local 2), (get_local 3)
 	set_local 4, pop
 	br_if $BB0_8, (get_local 4)
 	i32.switch (get_local 2), $BB0_2, $BB0_2, $BB0_2, $BB0_2, $BB0_2, $BB0_2, $BB0_2, $BB0_2, $BB0_3, $BB0_3, $BB0_3, $BB0_3, $BB0_3, $BB0_3, $BB0_3, $BB0_3, $BB0_4, $BB0_4, $BB0_4, $BB0_4, $BB0_4, $BB0_4, $BB0_5, $BB0_6, $BB0_7
@@ -54,14 +54,14 @@ bar64:
 	block $BB1_4
 	block $BB1_3
 	block $BB1_2
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.const 23
+	i64.const push, 23
 	set_local 3, pop
-	i64.gt_u (get_local 1), (get_local 3)
+	i64.gt_u push, (get_local 1), (get_local 3)
 	set_local 4, pop
 	br_if $BB1_8, (get_local 4)
-	i32.wrap/i64 (get_local 1)
+	i32.wrap/i64 push, (get_local 1)
 	set_local 2, pop
 	i32.switch (get_local 2), $BB1_2, $BB1_2, $BB1_2, $BB1_2, $BB1_2, $BB1_2, $BB1_2, $BB1_2, $BB1_3, $BB1_3, $BB1_3, $BB1_3, $BB1_3, $BB1_3, $BB1_3, $BB1_3, $BB1_4, $BB1_4, $BB1_4, $BB1_4, $BB1_4, $BB1_4, $BB1_5, $BB1_6, $BB1_7
 BB1_2:

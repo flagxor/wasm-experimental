@@ -7,11 +7,11 @@ fadd64:
 	.param f64
 	.result f64
 	.local f64, f64, f64
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.add (get_local 3), (get_local 2)
+	f64.add push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end0:
@@ -24,11 +24,11 @@ fsub64:
 	.param f64
 	.result f64
 	.local f64, f64, f64
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.sub (get_local 3), (get_local 2)
+	f64.sub push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end1:
@@ -41,11 +41,11 @@ fmul64:
 	.param f64
 	.result f64
 	.local f64, f64, f64
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.mul (get_local 3), (get_local 2)
+	f64.mul push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end2:
@@ -58,11 +58,11 @@ fdiv64:
 	.param f64
 	.result f64
 	.local f64, f64, f64
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.div (get_local 3), (get_local 2)
+	f64.div push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end3:
@@ -74,9 +74,9 @@ fabs64:
 	.param f64
 	.result f64
 	.local f64, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.abs (get_local 1)
+	f64.abs push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end4:
@@ -88,9 +88,9 @@ fneg64:
 	.param f64
 	.result f64
 	.local f64, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.neg (get_local 1)
+	f64.neg push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end5:
@@ -103,11 +103,11 @@ copysign64:
 	.param f64
 	.result f64
 	.local f64, f64, f64
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.copysign (get_local 3), (get_local 2)
+	f64.copysign push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end6:
@@ -119,9 +119,9 @@ sqrt64:
 	.param f64
 	.result f64
 	.local f64, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.sqrt (get_local 1)
+	f64.sqrt push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end7:
@@ -133,9 +133,9 @@ ceil64:
 	.param f64
 	.result f64
 	.local f64, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.ceil (get_local 1)
+	f64.ceil push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end8:
@@ -147,9 +147,9 @@ floor64:
 	.param f64
 	.result f64
 	.local f64, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.floor (get_local 1)
+	f64.floor push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end9:
@@ -161,9 +161,9 @@ trunc64:
 	.param f64
 	.result f64
 	.local f64, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.trunc (get_local 1)
+	f64.trunc push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end10:
@@ -175,9 +175,9 @@ nearest64:
 	.param f64
 	.result f64
 	.local f64, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.nearest (get_local 1)
+	f64.nearest push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end11:
@@ -189,9 +189,9 @@ nearest64_via_rint:
 	.param f64
 	.result f64
 	.local f64, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.nearest (get_local 1)
+	f64.nearest push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end12:

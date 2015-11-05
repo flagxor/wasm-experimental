@@ -6,18 +6,18 @@ test0:
 	.param i32
 	.local i32, i32, i32, i32, i32, i32, i32
 	block $BB0_3
-	i32.const 0
+	i32.const push, 0
 	set_local 7, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.const 1
+	i32.const push, 1
 	set_local 5, pop
 BB0_1:
 	loop $BB0_3
 	block $BB0_2
-	i32.add (get_local 7), (get_local 5)
+	i32.add push, (get_local 7), (get_local 5)
 	set_local 7, pop
-	i32.lt_s (get_local 7), (get_local 3)
+	i32.lt_s push, (get_local 7), (get_local 3)
 	set_local 6, pop
 	br_if $BB0_2, (get_local 6)
 	br $BB0_3
@@ -35,18 +35,18 @@ test1:
 	.param i32
 	.local i32, i32, i32, i32, i32, i32, i32
 	block $BB1_3
-	i32.const 0
+	i32.const push, 0
 	set_local 7, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.const 1
+	i32.const push, 1
 	set_local 5, pop
 BB1_1:
 	loop $BB1_3
 	block $BB1_2
-	i32.add (get_local 7), (get_local 5)
+	i32.add push, (get_local 7), (get_local 5)
 	set_local 7, pop
-	i32.lt_s (get_local 7), (get_local 3)
+	i32.lt_s push, (get_local 7), (get_local 3)
 	set_local 6, pop
 	br_if $BB1_2, (get_local 6)
 	br $BB1_3
@@ -65,35 +65,35 @@ test2:
 	.param i32
 	.local i32, i32, i32, i32, i32, i32, i32, i32, f64, f64, f64, i32, i32, i32, i32, i32, i32
 	block $BB2_2
-	get_local 1
+	get_local push, 1
 	set_local 18, pop
-	get_local 0
+	get_local push, 0
 	set_local 17, pop
-	i32.const 1
+	i32.const push, 1
 	set_local 8, pop
-	i32.lt_s (get_local 18), (get_local 8)
+	i32.lt_s push, (get_local 18), (get_local 8)
 	set_local 9, pop
 	br_if $BB2_2, (get_local 9)
 BB2_1:
 	loop $BB2_2
-	f64.load (get_local 17)
+	f64.load push, (get_local 17)
 	set_local 10, pop
-	f64.const 0x1.999999999999ap1
+	f64.const push, 0x1.999999999999ap1
 	set_local 11, pop
-	f64.mul (get_local 10), (get_local 11)
+	f64.mul push, (get_local 10), (get_local 11)
 	set_local 12, pop
 	f64.store (get_local 17), (get_local 12)
-	i32.const -1
+	i32.const push, -1
 	set_local 13, pop
-	i32.add (get_local 18), (get_local 13)
+	i32.add push, (get_local 18), (get_local 13)
 	set_local 18, pop
-	i32.const 8
+	i32.const push, 8
 	set_local 14, pop
-	i32.add (get_local 17), (get_local 14)
+	i32.add push, (get_local 17), (get_local 14)
 	set_local 17, pop
-	i32.const 0
+	i32.const push, 0
 	set_local 15, pop
-	i32.ne (get_local 18), (get_local 15)
+	i32.ne push, (get_local 18), (get_local 15)
 	set_local 16, pop
 	br_if $BB2_1, (get_local 16)
 BB2_2:
@@ -112,39 +112,39 @@ doublediamond:
 	block $BB3_5
 	block $BB3_4
 	block $BB3_2
-	get_local 2
+	get_local push, 2
 	set_local 4, pop
-	get_local 0
+	get_local push, 0
 	set_local 5, pop
-	i32.const 0
+	i32.const push, 0
 	set_local 6, pop
 	i32.store (get_local 4), (get_local 6)
-	i32.ne (get_local 5), (get_local 6)
+	i32.ne push, (get_local 5), (get_local 6)
 	set_local 7, pop
 	br_if $BB3_2, (get_local 7)
-	i32.const 1
+	i32.const push, 1
 	set_local 13, pop
 	i32.store (get_local 4), (get_local 13)
 	br $BB3_5
 BB3_2:
-	get_local 1
+	get_local push, 1
 	set_local 3, pop
-	i32.const 2
+	i32.const push, 2
 	set_local 8, pop
 	i32.store (get_local 4), (get_local 8)
-	i32.ne (get_local 3), (get_local 6)
+	i32.ne push, (get_local 3), (get_local 6)
 	set_local 10, pop
 	br_if $BB3_4, (get_local 10)
-	i32.const 3
+	i32.const push, 3
 	set_local 12, pop
 	i32.store (get_local 4), (get_local 12)
 	br $BB3_5
 BB3_4:
-	i32.const 4
+	i32.const push, 4
 	set_local 11, pop
 	i32.store (get_local 4), (get_local 11)
 BB3_5:
-	i32.const 5
+	i32.const push, 5
 	set_local 14, pop
 	i32.store (get_local 4), (get_local 14)
 	return (get_local 6)
@@ -159,21 +159,21 @@ triangle:
 	.result i32
 	.local i32, i32, i32, i32, i32, i32, i32
 	block $BB4_2
-	get_local 0
+	get_local push, 0
 	set_local 2, pop
-	get_local 1
+	get_local push, 1
 	set_local 3, pop
-	i32.const 0
+	i32.const push, 0
 	set_local 4, pop
 	i32.store (get_local 2), (get_local 4)
-	i32.ne (get_local 3), (get_local 4)
+	i32.ne push, (get_local 3), (get_local 4)
 	set_local 5, pop
 	br_if $BB4_2, (get_local 5)
-	i32.const 1
+	i32.const push, 1
 	set_local 6, pop
 	i32.store (get_local 2), (get_local 6)
 BB4_2:
-	i32.const 2
+	i32.const push, 2
 	set_local 7, pop
 	i32.store (get_local 2), (get_local 7)
 	return (get_local 4)
@@ -189,26 +189,26 @@ diamond:
 	.local i32, i32, i32, i32, i32, i32, i32, i32
 	block $BB5_3
 	block $BB5_2
-	get_local 0
+	get_local push, 0
 	set_local 2, pop
-	get_local 1
+	get_local push, 1
 	set_local 3, pop
-	i32.const 0
+	i32.const push, 0
 	set_local 4, pop
 	i32.store (get_local 2), (get_local 4)
-	i32.ne (get_local 3), (get_local 4)
+	i32.ne push, (get_local 3), (get_local 4)
 	set_local 5, pop
 	br_if $BB5_2, (get_local 5)
-	i32.const 1
+	i32.const push, 1
 	set_local 7, pop
 	i32.store (get_local 2), (get_local 7)
 	br $BB5_3
 BB5_2:
-	i32.const 2
+	i32.const push, 2
 	set_local 6, pop
 	i32.store (get_local 2), (get_local 6)
 BB5_3:
-	i32.const 3
+	i32.const push, 3
 	set_local 8, pop
 	i32.store (get_local 2), (get_local 8)
 	return (get_local 4)
@@ -221,9 +221,9 @@ single_block:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.const 0
+	i32.const push, 0
 	set_local 2, pop
 	i32.store (get_local 1), (get_local 2)
 	return (get_local 2)
@@ -236,12 +236,12 @@ minimal_loop:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.const 0
+	i32.const push, 0
 	set_local 2, pop
 	i32.store (get_local 1), (get_local 2)
-	i32.const 1
+	i32.const push, 1
 	set_local 3, pop
 BB7_1:
 	loop $BB7_2
@@ -257,22 +257,22 @@ simple_loop:
 	.param i32
 	.result i32
 	.local i32, i32, i32, i32, i32, i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 3, pop
-	get_local 0
+	get_local push, 0
 	set_local 2, pop
-	i32.const 0
+	i32.const push, 0
 	set_local 4, pop
 	i32.store (get_local 2), (get_local 4)
-	i32.eq (get_local 3), (get_local 4)
+	i32.eq push, (get_local 3), (get_local 4)
 	set_local 6, pop
-	i32.const 1
+	i32.const push, 1
 	set_local 7, pop
 BB8_1:
 	loop $BB8_2
 	i32.store (get_local 2), (get_local 7)
 	br_if $BB8_1, (get_local 6)
-	i32.const 2
+	i32.const push, 2
 	set_local 8, pop
 	i32.store (get_local 2), (get_local 8)
 	return (get_local 4)
@@ -289,33 +289,33 @@ doubletriangle:
 	.local i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32
 	block $BB9_4
 	block $BB9_3
-	get_local 2
+	get_local push, 2
 	set_local 4, pop
-	get_local 0
+	get_local push, 0
 	set_local 5, pop
-	i32.const 0
+	i32.const push, 0
 	set_local 6, pop
 	i32.store (get_local 4), (get_local 6)
-	i32.ne (get_local 5), (get_local 6)
+	i32.ne push, (get_local 5), (get_local 6)
 	set_local 7, pop
 	br_if $BB9_4, (get_local 7)
-	get_local 1
+	get_local push, 1
 	set_local 3, pop
-	i32.const 2
+	i32.const push, 2
 	set_local 8, pop
 	i32.store (get_local 4), (get_local 8)
-	i32.ne (get_local 3), (get_local 6)
+	i32.ne push, (get_local 3), (get_local 6)
 	set_local 10, pop
 	br_if $BB9_3, (get_local 10)
-	i32.const 3
+	i32.const push, 3
 	set_local 11, pop
 	i32.store (get_local 4), (get_local 11)
 BB9_3:
-	i32.const 4
+	i32.const push, 4
 	set_local 12, pop
 	i32.store (get_local 4), (get_local 12)
 BB9_4:
-	i32.const 5
+	i32.const push, 5
 	set_local 13, pop
 	i32.store (get_local 4), (get_local 13)
 	return (get_local 6)
@@ -332,34 +332,34 @@ ifelse_earlyexits:
 	.local i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32
 	block $BB10_4
 	block $BB10_2
-	get_local 2
+	get_local push, 2
 	set_local 4, pop
-	get_local 0
+	get_local push, 0
 	set_local 5, pop
-	i32.const 0
+	i32.const push, 0
 	set_local 6, pop
 	i32.store (get_local 4), (get_local 6)
-	i32.ne (get_local 5), (get_local 6)
+	i32.ne push, (get_local 5), (get_local 6)
 	set_local 7, pop
 	br_if $BB10_2, (get_local 7)
-	i32.const 1
+	i32.const push, 1
 	set_local 12, pop
 	i32.store (get_local 4), (get_local 12)
 	br $BB10_4
 BB10_2:
-	get_local 1
+	get_local push, 1
 	set_local 3, pop
-	i32.const 2
+	i32.const push, 2
 	set_local 8, pop
 	i32.store (get_local 4), (get_local 8)
-	i32.ne (get_local 3), (get_local 6)
+	i32.ne push, (get_local 3), (get_local 6)
 	set_local 10, pop
 	br_if $BB10_4, (get_local 10)
-	i32.const 3
+	i32.const push, 3
 	set_local 11, pop
 	i32.store (get_local 4), (get_local 11)
 BB10_4:
-	i32.const 4
+	i32.const push, 4
 	set_local 13, pop
 	i32.store (get_local 4), (get_local 13)
 	return (get_local 6)
@@ -372,9 +372,9 @@ test3:
 	.param i32
 	.local i32, i32, i32, i32, i32, i32, i32
 	block $BB11_1
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.const 0
+	i32.const push, 0
 	set_local 2, pop
 	br_if $BB11_1, (get_local 2)
 	br $BB11_2
@@ -384,11 +384,11 @@ BB11_2:
 	loop $BB11_5
 	block $BB11_4
 	block $BB11_2
-	i32.eq (get_local 5), (get_local 2)
+	i32.eq push, (get_local 5), (get_local 2)
 	set_local 4, pop
 BB11_3:
 	loop $BB11_4
-	i32.eq (get_local 7), (get_local 1)
+	i32.eq push, (get_local 7), (get_local 1)
 	set_local 6, pop
 	br_if $BB11_4, (get_local 6)
 	br $BB11_3

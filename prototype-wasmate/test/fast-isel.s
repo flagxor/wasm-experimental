@@ -5,7 +5,7 @@
 immediate_f32:
 	.result f32
 	.local f32
-	f32.const 0x1.4p1
+	f32.const push, 0x1.4p1
 	set_local 0, pop
 	return (get_local 0)
 func_end0:
@@ -16,7 +16,7 @@ func_end0:
 immediate_f64:
 	.result f64
 	.local f64
-	f64.const 0x1.4p1
+	f64.const push, 0x1.4p1
 	set_local 0, pop
 	return (get_local 0)
 func_end1:

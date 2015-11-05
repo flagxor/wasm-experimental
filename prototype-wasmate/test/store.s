@@ -6,9 +6,9 @@ sti32:
 	.param i32
 	.param i32
 	.local i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
 	i32.store (get_local 3), (get_local 2)
 	return
@@ -21,9 +21,9 @@ sti64:
 	.param i32
 	.param i64
 	.local i64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
 	i64.store (get_local 3), (get_local 2)
 	return
@@ -36,9 +36,9 @@ stf32:
 	.param i32
 	.param f32
 	.local f32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
 	f32.store (get_local 3), (get_local 2)
 	return
@@ -51,9 +51,9 @@ stf64:
 	.param i32
 	.param f64
 	.local f64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
 	f64.store (get_local 3), (get_local 2)
 	return

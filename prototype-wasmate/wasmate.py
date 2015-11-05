@@ -302,7 +302,7 @@ def sexprify(command, args):
     s = '(' + command
     if len(args) != 0:
         s += ' '
-    s += ' '.join([resolve_label(arg) for arg in args])
+    s += ' '.join([resolve_label(arg) for arg in args if arg != 'push'])
     s += ')'
     return s
 
@@ -320,10 +320,6 @@ class TextPassHandler(PassHandler):
         if current_section == ".text":
             if current_function is not None:
                 # Label inside a function.
-
-                # Flush the expression stack before every label.
-                self.handle_void_call()
-
                 if labelname.startswith('func_end'):
                     pass
                 else:
@@ -339,16 +335,7 @@ class TextPassHandler(PassHandler):
                 out.write_line('(func $' + labelname)
                 out.indent()
 
-    def handle_void_call(self):
-        if len(self.expr_stack) != 0 and self.expr_stack[0].startswith('(call'):
-            out.write_line(self.expr_stack.pop())
-
     def handle_mnemonic(self, command, args):
-        # Hack: We don't know call signatures, so we don't know that void calls
-        # don't push anything onto the stack.
-        if command != 'set_local':
-            self.handle_void_call()
-
         # TODO(binji): LLVM outputs types for some commands that shouldn't have
         # them. Fix this upstream.
         split = command.split('.')
@@ -372,12 +359,21 @@ class TextPassHandler(PassHandler):
             assert len(self.expr_stack) == 0
         elif (command in ['br_if', 'br', 'switch', 'return', 'grow_memory'] or
               'store' in command):
+            assert not 'push' in args
             out.write_line(sexprify(command, args))
             assert len(self.expr_stack) == 0
         elif command == 'call' and args[0] in import_funs:
-            self.expr_stack.append(sexprify('call_import', args))
+            line = sexprify('call_import', args)
+            if 'push' in args:
+                self.expr_stack.append(line)
+            else:
+                out.write_line(line)
         else:
-            self.expr_stack.append(sexprify(command, args))
+            line = sexprify(command, args)
+            if 'push' in args:
+                self.expr_stack.append(line)
+            else:
+                out.write_line(line)
 
 
 def do_pass(handler, all_lines):

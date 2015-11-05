@@ -5,7 +5,7 @@
 memory_size:
 	.result i32
 	.local i32
-	i32.memory_size
+	i32.memory_size push
 	set_local 0, pop
 	return (get_local 0)
 func_end0:
@@ -16,7 +16,7 @@ func_end0:
 grow_memory:
 	.param i32
 	.local i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
 	i32.grow_memory (get_local 1)
 	return

@@ -6,9 +6,9 @@ load_u_i1_i32:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.load8_u (get_local 1)
+	i32.load8_u push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end0:
@@ -20,15 +20,15 @@ load_s_i1_i32:
 	.param i32
 	.result i32
 	.local i32, i32, i32, i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.load8_u (get_local 1)
+	i32.load8_u push, (get_local 1)
 	set_local 2, pop
-	i32.const 31
+	i32.const push, 31
 	set_local 3, pop
-	i32.shl (get_local 2), (get_local 3)
+	i32.shl push, (get_local 2), (get_local 3)
 	set_local 4, pop
-	i32.shr_s (get_local 4), (get_local 3)
+	i32.shr_s push, (get_local 4), (get_local 3)
 	set_local 5, pop
 	return (get_local 5)
 func_end1:
@@ -40,9 +40,9 @@ load_u_i1_i64:
 	.param i32
 	.result i64
 	.local i32, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.load8_u (get_local 1)
+	i64.load8_u push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end2:
@@ -54,15 +54,15 @@ load_s_i1_i64:
 	.param i32
 	.result i64
 	.local i32, i64, i64, i64, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.load8_u (get_local 1)
+	i64.load8_u push, (get_local 1)
 	set_local 2, pop
-	i64.const 63
+	i64.const push, 63
 	set_local 3, pop
-	i64.shl (get_local 2), (get_local 3)
+	i64.shl push, (get_local 2), (get_local 3)
 	set_local 4, pop
-	i64.shr_s (get_local 4), (get_local 3)
+	i64.shr_s push, (get_local 4), (get_local 3)
 	set_local 5, pop
 	return (get_local 5)
 func_end3:
@@ -74,13 +74,13 @@ store_i32_i1:
 	.param i32
 	.param i32
 	.local i32, i32, i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 2, pop
-	get_local 1
+	get_local push, 1
 	set_local 3, pop
-	i32.const 1
+	i32.const push, 1
 	set_local 4, pop
-	i32.and (get_local 3), (get_local 4)
+	i32.and push, (get_local 3), (get_local 4)
 	set_local 5, pop
 	i32.store8 (get_local 2), (get_local 5)
 	return
@@ -93,13 +93,13 @@ store_i64_i1:
 	.param i32
 	.param i64
 	.local i32, i64, i64, i64
-	get_local 0
+	get_local push, 0
 	set_local 2, pop
-	get_local 1
+	get_local push, 1
 	set_local 3, pop
-	i64.const 1
+	i64.const push, 1
 	set_local 4, pop
-	i64.and (get_local 3), (get_local 4)
+	i64.and push, (get_local 3), (get_local 4)
 	set_local 5, pop
 	i64.store8 (get_local 2), (get_local 5)
 	return

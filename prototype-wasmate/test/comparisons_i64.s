@@ -7,11 +7,11 @@ eq_i64:
 	.param i64
 	.result i32
 	.local i64, i64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i64.eq (get_local 3), (get_local 2)
+	i64.eq push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end0:
@@ -24,11 +24,11 @@ ne_i64:
 	.param i64
 	.result i32
 	.local i64, i64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i64.ne (get_local 3), (get_local 2)
+	i64.ne push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end1:
@@ -41,11 +41,11 @@ slt_i64:
 	.param i64
 	.result i32
 	.local i64, i64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i64.lt_s (get_local 3), (get_local 2)
+	i64.lt_s push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end2:
@@ -58,11 +58,11 @@ sle_i64:
 	.param i64
 	.result i32
 	.local i64, i64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i64.le_s (get_local 3), (get_local 2)
+	i64.le_s push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end3:
@@ -75,11 +75,11 @@ ult_i64:
 	.param i64
 	.result i32
 	.local i64, i64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i64.lt_u (get_local 3), (get_local 2)
+	i64.lt_u push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end4:
@@ -92,11 +92,11 @@ ule_i64:
 	.param i64
 	.result i32
 	.local i64, i64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i64.le_u (get_local 3), (get_local 2)
+	i64.le_u push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end5:
@@ -109,11 +109,11 @@ sgt_i64:
 	.param i64
 	.result i32
 	.local i64, i64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i64.gt_s (get_local 3), (get_local 2)
+	i64.gt_s push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end6:
@@ -126,11 +126,11 @@ sge_i64:
 	.param i64
 	.result i32
 	.local i64, i64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i64.ge_s (get_local 3), (get_local 2)
+	i64.ge_s push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end7:
@@ -143,11 +143,11 @@ ugt_i64:
 	.param i64
 	.result i32
 	.local i64, i64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i64.gt_u (get_local 3), (get_local 2)
+	i64.gt_u push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end8:
@@ -160,11 +160,11 @@ uge_i64:
 	.param i64
 	.result i32
 	.local i64, i64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i64.ge_u (get_local 3), (get_local 2)
+	i64.ge_u push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end9:

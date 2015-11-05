@@ -6,9 +6,9 @@ sext_i8_i32:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.load8_s (get_local 1)
+	i32.load8_s push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end0:
@@ -20,9 +20,9 @@ zext_i8_i32:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.load8_u (get_local 1)
+	i32.load8_u push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end1:
@@ -34,9 +34,9 @@ sext_i16_i32:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.load16_s (get_local 1)
+	i32.load16_s push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end2:
@@ -48,9 +48,9 @@ zext_i16_i32:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.load16_u (get_local 1)
+	i32.load16_u push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end3:
@@ -62,9 +62,9 @@ sext_i8_i64:
 	.param i32
 	.result i64
 	.local i32, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.load8_s (get_local 1)
+	i64.load8_s push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end4:
@@ -76,9 +76,9 @@ zext_i8_i64:
 	.param i32
 	.result i64
 	.local i32, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.load8_u (get_local 1)
+	i64.load8_u push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end5:
@@ -90,9 +90,9 @@ sext_i16_i64:
 	.param i32
 	.result i64
 	.local i32, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.load16_s (get_local 1)
+	i64.load16_s push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end6:
@@ -104,9 +104,9 @@ zext_i16_i64:
 	.param i32
 	.result i64
 	.local i32, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.load16_u (get_local 1)
+	i64.load16_u push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end7:
@@ -118,9 +118,9 @@ sext_i32_i64:
 	.param i32
 	.result i64
 	.local i32, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.load32_s (get_local 1)
+	i64.load32_s push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end8:
@@ -132,9 +132,9 @@ zext_i32_i64:
 	.param i32
 	.result i64
 	.local i32, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.load32_u (get_local 1)
+	i64.load32_u push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end9:

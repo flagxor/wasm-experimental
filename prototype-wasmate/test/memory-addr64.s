@@ -5,7 +5,7 @@
 memory_size:
 	.result i64
 	.local i64
-	i64.memory_size
+	i64.memory_size push
 	set_local 0, pop
 	return (get_local 0)
 func_end0:
@@ -16,7 +16,7 @@ func_end0:
 grow_memory:
 	.param i64
 	.local i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
 	i64.grow_memory (get_local 1)
 	return
