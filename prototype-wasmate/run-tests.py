@@ -18,8 +18,8 @@ def DiffLines(expected, actual):
 
 class RunTests(unittest.TestCase):
     def _runTestFile(self, shortName, fileName):
-        expectedLogPath = fileName.replace("test/", "test/expected-output/").replace(".wack", ".wast")
-        logPath = fileName.replace("test/", "test/output/").replace(".wack", ".wast")
+        expectedLogPath = fileName.replace("test/", "test/expected-output/").replace(".s", ".wast")
+        logPath = fileName.replace("test/", "test/output/").replace(".s", ".wast")
         try:
             os.remove(logPath)
         except OSError:
@@ -61,6 +61,6 @@ if __name__ == "__main__":
     except OSError:
         pass
 
-    testFiles = glob.glob("test/*.wack")
+    testFiles = glob.glob("test/*.s")
     generate_test_cases(RunTests, testFiles)
     unittest.main()

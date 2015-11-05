@@ -12,7 +12,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR= os.path.dirname(SCRIPT_DIR)
 LLVM_TEST_DIR = os.path.join(ROOT_DIR, 'third_party', 'llvm', 'test', 'CodeGen',
                              'WebAssembly')
-WACK_TEST_DIR = os.path.join(ROOT_DIR, 'test')
+S_TEST_DIR = os.path.join(ROOT_DIR, 'test')
 LLVM_DIR = os.path.join(ROOT_DIR, 'third_party', 'llvm')
 BIN_DIR = os.path.join(LLVM_DIR, 'build', 'bin')
 
@@ -53,12 +53,12 @@ def main(args):
     tests = FindTestFiles(LLVM_TEST_DIR, '.ll')
     for ll_test in tests:
         name_noext = os.path.splitext(os.path.basename(ll_test))[0]
-        wack = os.path.join(WACK_TEST_DIR, name_noext + '.wack')
+        s = os.path.join(S_TEST_DIR, name_noext + '.s')
         run_line = GetRunLine(ll_test)
         cmd = shlex.split(run_line)
-        cmd.extend([ll_test, '-o', wack])
+        cmd.extend([ll_test, '-o', s])
         # Don't run if the command isn't llc. Some are opt and they don't
-        # generate .wack files.
+        # generate .s files.
         if cmd[0] != 'llc':
             continue
         cmd[0] = os.path.join(BIN_DIR, cmd[0])

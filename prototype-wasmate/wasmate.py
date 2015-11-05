@@ -15,7 +15,7 @@ a hack. A real linker will eventually be needed.""")
   parser.add_argument('-o', '--output', type=str, default=None,
                       help='output `.wasm` s-expression file')
   parser.add_argument('input', metavar='INPUT', nargs='?',
-                      help='input `.wack` LLVM assembly file')
+                      help='input `.s` LLVM assembly file')
   return parser.parse_args()
 
 def readInput(input_file):
