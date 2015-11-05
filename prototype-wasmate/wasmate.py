@@ -39,7 +39,6 @@ data_labels = {}
 data_data = []
 imports = []
 import_funs = []
-expr_stack = []
 block_labels = {}
 
 def error(message):
@@ -204,7 +203,7 @@ def handle_dot_directive(command, args, rest):
             size = int(args[1])
             align = (1 << int(args[2]))
             align_data_to(align)
-            handle_label(name, [])
+            handle_label(name)
             for i in range(0, size):
                 data_data.append('\0')
     elif command == 'import':
@@ -214,14 +213,11 @@ def handle_dot_directive(command, args, rest):
         error("unknown dot command: ." + command)
 
 # Handle a label definition, e.g 'foo:'
-def handle_label(labelname, args):
+def handle_label(labelname):
     global current_function
     global current_indent
     global current_label
-    if len(args) != 0:
-        error("label with args")
     if current_pass == "text" and current_function != None:
-        handle_void_call()
         if labelname.startswith('func_end'):
             pass
         else:
@@ -243,56 +239,6 @@ def resolve_label(arg):
     if arg[0] == '$' and data_labels.has_key(arg[1:]):
         return str(data_labels[arg[1:]])
     return arg
-
-# Convert an instruction from mnemonic syntax to sexpr syntax.
-def sexprify(command, args):
-    s = '(' + command
-    if len(args) != 0:
-        s += ' '
-    s += ' '.join([resolve_label(arg) for arg in args])
-    s += ')'
-    return s
-
-def handle_void_call():
-    if len(expr_stack) != 0 and expr_stack[0].startswith('(call'):
-        writeOutput(current_indent + expr_stack.pop())
-
-# Handle an instruction mnemonic line.
-def handle_mnemonic(command, args):
-    # Hack: We don't know call signatures, so we don't know that void calls
-    # don't push anything onto the stack.
-    if command != 'set_local':
-        handle_void_call()
-
-    # TODO(binji): LLVM outputs types for some commands that shouldn't have
-    # them. Fix this upstream.
-    split = command.split('.')
-    if len(split) == 2:
-        if split[1] in ('call_indirect', 'page_size', 'memory_size',
-                        'resize_memory', 'switch'):
-            command = split[1]
-
-    if command == 'block':
-        writeOutput(current_indent + '(block ' + args[0])
-        assert len(expr_stack) == 0
-        push_label(args[0][1:]) # strip leading $
-    elif command == 'loop':
-        writeOutput(current_indent + '(loop $' + current_label)
-        assert len(expr_stack) == 0
-        push_label(args[0][1:]) # strip leading $
-    elif command == 'set_local':
-        assert args[1] == 'pop'
-        writeOutput(current_indent + '(set_local ' + args[0] + ' ' +
-                    expr_stack.pop() + ')')
-        assert len(expr_stack) == 0
-    elif (command in ['br_if', 'br', 'switch', 'return', 'resize_memory'] or
-          'store' in command):
-        writeOutput(current_indent + sexprify(command, args))
-        assert len(expr_stack) == 0
-    elif command == 'call' and args[0] in import_funs:
-        expr_stack.append(sexprify('call_import', args))
-    else:
-        expr_stack.append(sexprify(command, args))
 
 def cleanup_line(line):
     # Traslate '# BB#0:' comments into proper BBx_0: labels. This hack is
@@ -323,14 +269,95 @@ def parse_line(line):
 
     return command, args, rest
 
-def do_pass(pass_name, all_lines):
+class PassHandler(object):
+    def handle_label(self, labelname):
+        handle_label(labelname)
+
+    def handle_dot_directive(self, command, args, rest):
+        handle_dot_directive(command, args, rest)
+
+    def handle_mnemonic(self, command, args):
+        pass
+
+class DataPassHandler(PassHandler):
+    def name(self):
+        return 'data'
+
+class ImportsPassHandler(PassHandler):
+    def name(self):
+        return 'imports'
+
+
+# Convert an instruction from mnemonic syntax to sexpr syntax.
+def sexprify(command, args):
+    s = '(' + command
+    if len(args) != 0:
+        s += ' '
+    s += ' '.join([resolve_label(arg) for arg in args])
+    s += ')'
+    return s
+
+class TextPassHandler(PassHandler):
+    def __init__(self):
+        self.expr_stack = []
+
+    def name(self):
+        return 'text'
+
+    def handle_label(self, labelname):
+        # Flush the expression stack before every label.
+        self.handle_void_call()
+        handle_label(labelname)
+
+    def handle_void_call(self):
+        if len(self.expr_stack) != 0 and self.expr_stack[0].startswith('(call'):
+            writeOutput(current_indent + self.expr_stack.pop())
+
+    def handle_mnemonic(self, command, args):
+        # Hack: We don't know call signatures, so we don't know that void calls
+        # don't push anything onto the stack.
+        if command != 'set_local':
+            self.handle_void_call()
+
+        # TODO(binji): LLVM outputs types for some commands that shouldn't have
+        # them. Fix this upstream.
+        split = command.split('.')
+        if len(split) == 2:
+            if split[1] in ('call_indirect', 'page_size', 'memory_size',
+                            'resize_memory', 'switch'):
+                command = split[1]
+
+        if command == 'block':
+            writeOutput(current_indent + '(block ' + args[0])
+            assert len(self.expr_stack) == 0
+            push_label(args[0][1:]) # strip leading $
+        elif command == 'loop':
+            writeOutput(current_indent + '(loop $' + current_label)
+            assert len(self.expr_stack) == 0
+            push_label(args[0][1:]) # strip leading $
+        elif command == 'set_local':
+            assert args[1] == 'pop'
+            writeOutput(current_indent + '(set_local ' + args[0] + ' ' +
+                        self.expr_stack.pop() + ')')
+            assert len(self.expr_stack) == 0
+        elif (command in ['br_if', 'br', 'switch', 'return', 'resize_memory'] or
+              'store' in command):
+            writeOutput(current_indent + sexprify(command, args))
+            assert len(self.expr_stack) == 0
+        elif command == 'call' and args[0] in import_funs:
+            self.expr_stack.append(sexprify('call_import', args))
+        else:
+            self.expr_stack.append(sexprify(command, args))
+
+
+def do_pass(handler, all_lines):
     global current_pass
     global current_line_number
     global current_section
     global current_label
     global block_labels
 
-    current_pass = pass_name
+    current_pass = handler.name()
     current_line_number = 0
     current_section = ".text"
     current_label = None
@@ -343,12 +370,14 @@ def do_pass(pass_name, all_lines):
         command, args, rest = parse_line(line)
 
         # Decide what to do.
-        if command[-1] == ':':
-            handle_label(command[:-1], args)
-        elif command[0] == '.':
-            handle_dot_directive(command[1:], args, rest)
-        elif current_pass == 'text':
-            handle_mnemonic(command, args)
+        if command.endswith(':'):
+            if args:
+                error("label with args")
+            handler.handle_label(command[:-1])
+        elif command.startswith('.'):
+            handler.handle_dot_directive(command[1:], args, rest)
+        else:
+            handler.handle_mnemonic(command, args)
 
         current_line_number += 1
 
@@ -398,11 +427,11 @@ def Main():
   # all the data symbols so we can plug in absolute offsets into the text, while
   # having all the imports on top (which then lets us transform call to
   # call_import).
-  do_pass('data', all_lines)
-  do_pass('imports', all_lines)
+  do_pass(DataPassHandler(), all_lines)
+  do_pass(ImportsPassHandler(), all_lines)
   for i in imports:
       writeOutput(current_indent + '(import ' + i + ')')
-  do_pass('text', all_lines)
+  do_pass(TextPassHandler(), all_lines)
 
   write_data_segment()
 
