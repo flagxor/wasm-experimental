@@ -36,7 +36,7 @@ uno_f32:
 	set_local 4, pop
 	f32.ne (get_local 2), (get_local 2)
 	set_local 5, pop
-	i32.ior (get_local 5), (get_local 4)
+	i32.or (get_local 5), (get_local 4)
 	set_local 6, pop
 	return (get_local 6)
 func_end1:
@@ -161,9 +161,9 @@ ueq_f32:
 	set_local 5, pop
 	f32.ne (get_local 3), (get_local 3)
 	set_local 6, pop
-	i32.ior (get_local 6), (get_local 5)
+	i32.or (get_local 6), (get_local 5)
 	set_local 7, pop
-	i32.ior (get_local 4), (get_local 7)
+	i32.or (get_local 4), (get_local 7)
 	set_local 8, pop
 	return (get_local 8)
 func_end8:
@@ -211,9 +211,9 @@ ult_f32:
 	set_local 5, pop
 	f32.ne (get_local 3), (get_local 3)
 	set_local 6, pop
-	i32.ior (get_local 6), (get_local 5)
+	i32.or (get_local 6), (get_local 5)
 	set_local 7, pop
-	i32.ior (get_local 4), (get_local 7)
+	i32.or (get_local 4), (get_local 7)
 	set_local 8, pop
 	return (get_local 8)
 func_end10:
@@ -236,9 +236,9 @@ ule_f32:
 	set_local 5, pop
 	f32.ne (get_local 3), (get_local 3)
 	set_local 6, pop
-	i32.ior (get_local 6), (get_local 5)
+	i32.or (get_local 6), (get_local 5)
 	set_local 7, pop
-	i32.ior (get_local 4), (get_local 7)
+	i32.or (get_local 4), (get_local 7)
 	set_local 8, pop
 	return (get_local 8)
 func_end11:
@@ -261,9 +261,9 @@ ugt_f32:
 	set_local 5, pop
 	f32.ne (get_local 3), (get_local 3)
 	set_local 6, pop
-	i32.ior (get_local 6), (get_local 5)
+	i32.or (get_local 6), (get_local 5)
 	set_local 7, pop
-	i32.ior (get_local 4), (get_local 7)
+	i32.or (get_local 4), (get_local 7)
 	set_local 8, pop
 	return (get_local 8)
 func_end12:
@@ -286,9 +286,9 @@ uge_f32:
 	set_local 5, pop
 	f32.ne (get_local 3), (get_local 3)
 	set_local 6, pop
-	i32.ior (get_local 6), (get_local 5)
+	i32.or (get_local 6), (get_local 5)
 	set_local 7, pop
-	i32.ior (get_local 4), (get_local 7)
+	i32.or (get_local 4), (get_local 7)
 	set_local 8, pop
 	return (get_local 8)
 func_end13:

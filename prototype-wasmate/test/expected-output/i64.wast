@@ -87,15 +87,15 @@
     (set_local 4 (i64.and (get_local 3) (get_local 2)))
     (return (get_local 4))
   )
-  (export "ior64" $ior64)
-  (func $ior64
+  (export "or64" $or64)
+  (func $or64
     (param i64)
     (param i64)
     (result i64)
     (local i64 i64 i64)
     (set_local 2 (get_local 1))
     (set_local 3 (get_local 0))
-    (set_local 4 (i64.ior (get_local 3) (get_local 2)))
+    (set_local 4 (i64.or (get_local 3) (get_local 2)))
     (return (get_local 4))
   )
   (export "xor64" $xor64)

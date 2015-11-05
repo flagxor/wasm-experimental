@@ -136,9 +136,9 @@ and64:
 func_end7:
 	.size	and64, func_end7-and64
 
-	.globl	ior64
-	.type	ior64,@function
-ior64:
+	.globl	or64
+	.type	or64,@function
+or64:
 	.param i64
 	.param i64
 	.result i64
@@ -147,11 +147,11 @@ ior64:
 	set_local 2, pop
 	get_local 0
 	set_local 3, pop
-	i64.ior (get_local 3), (get_local 2)
+	i64.or (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end8:
-	.size	ior64, func_end8-ior64
+	.size	or64, func_end8-or64
 
 	.globl	xor64
 	.type	xor64,@function

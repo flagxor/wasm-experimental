@@ -87,15 +87,15 @@
     (set_local 4 (i32.and (get_local 3) (get_local 2)))
     (return (get_local 4))
   )
-  (export "ior32" $ior32)
-  (func $ior32
+  (export "or32" $or32)
+  (func $or32
     (param i32)
     (param i32)
     (result i32)
     (local i32 i32 i32)
     (set_local 2 (get_local 1))
     (set_local 3 (get_local 0))
-    (set_local 4 (i32.ior (get_local 3) (get_local 2)))
+    (set_local 4 (i32.or (get_local 3) (get_local 2)))
     (return (get_local 4))
   )
   (export "xor32" $xor32)

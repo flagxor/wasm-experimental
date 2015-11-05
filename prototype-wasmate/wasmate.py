@@ -353,8 +353,8 @@ class TextPassHandler(PassHandler):
         # them. Fix this upstream.
         split = command.split('.')
         if len(split) == 2:
-            if split[1] in ('call_indirect', 'page_size', 'memory_size',
-                            'resize_memory', 'switch'):
+            if split[1] in ('call_indirect', 'memory_size',
+                            'grow_memory', 'switch'):
                 command = split[1]
 
         if command == 'block':
@@ -370,7 +370,7 @@ class TextPassHandler(PassHandler):
             out.write_line('(set_local ' + args[0] + ' ' +
                         self.expr_stack.pop() + ')')
             assert len(self.expr_stack) == 0
-        elif (command in ['br_if', 'br', 'switch', 'return', 'resize_memory'] or
+        elif (command in ['br_if', 'br', 'switch', 'return', 'grow_memory'] or
               'store' in command):
             out.write_line(sexprify(command, args))
             assert len(self.expr_stack) == 0

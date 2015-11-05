@@ -136,9 +136,9 @@ and32:
 func_end7:
 	.size	and32, func_end7-and32
 
-	.globl	ior32
-	.type	ior32,@function
-ior32:
+	.globl	or32
+	.type	or32,@function
+or32:
 	.param i32
 	.param i32
 	.result i32
@@ -147,11 +147,11 @@ ior32:
 	set_local 2, pop
 	get_local 0
 	set_local 3, pop
-	i32.ior (get_local 3), (get_local 2)
+	i32.or (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end8:
-	.size	ior32, func_end8-ior32
+	.size	or32, func_end8-or32
 
 	.globl	xor32
 	.type	xor32,@function
