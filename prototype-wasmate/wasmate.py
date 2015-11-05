@@ -118,7 +118,7 @@ def handle_dot_asciz(rest):
         data_data.append('\0')
 
 # Handle a dot directive, e.g '.foo'
-def handle_dot_directive(command, args, rest):
+def handle_dot_directive(handler, command, args, rest):
     global current_function
     global current_function_number
     global current_section
@@ -203,7 +203,7 @@ def handle_dot_directive(command, args, rest):
             size = int(args[1])
             align = (1 << int(args[2]))
             align_data_to(align)
-            handle_label(name)
+            handler.handle_label(name)
             for i in range(0, size):
                 data_data.append('\0')
     elif command == 'import':
@@ -211,29 +211,6 @@ def handle_dot_directive(command, args, rest):
             register_import(args[0])
     else:
         error("unknown dot command: ." + command)
-
-# Handle a label definition, e.g 'foo:'
-def handle_label(labelname):
-    global current_function
-    global current_indent
-    global current_label
-    if current_pass == "text" and current_function != None:
-        if labelname.startswith('func_end'):
-            pass
-        else:
-            if block_labels.has_key(labelname):
-                for i in range(0, block_labels[labelname]):
-                    writeOutput(current_indent + ')')
-            block_labels[labelname] = 0
-            current_label = labelname
-    elif current_pass == "text" and current_section == ".text":
-        assert current_function == None
-        current_function = labelname
-        writeOutput(current_indent + '(func $' + labelname)
-        current_indent += '  '
-    elif current_pass == "data" and current_section == ".data":
-        assert current_function == None
-        data_labels[labelname] = len(data_data)
 
 def resolve_label(arg):
     if arg[0] == '$' and data_labels.has_key(arg[1:]):
@@ -271,10 +248,10 @@ def parse_line(line):
 
 class PassHandler(object):
     def handle_label(self, labelname):
-        handle_label(labelname)
+        pass
 
     def handle_dot_directive(self, command, args, rest):
-        handle_dot_directive(command, args, rest)
+        handle_dot_directive(self, command, args, rest)
 
     def handle_mnemonic(self, command, args):
         pass
@@ -282,6 +259,11 @@ class PassHandler(object):
 class DataPassHandler(PassHandler):
     def name(self):
         return 'data'
+
+    def handle_label(self, labelname):
+        if current_section == ".data":
+            assert current_function is None
+            data_labels[labelname] = len(data_data)
 
 class ImportsPassHandler(PassHandler):
     def name(self):
@@ -305,9 +287,31 @@ class TextPassHandler(PassHandler):
         return 'text'
 
     def handle_label(self, labelname):
-        # Flush the expression stack before every label.
-        self.handle_void_call()
-        handle_label(labelname)
+        global current_function
+        global current_indent
+        global current_label
+
+        if current_section == ".text":
+            if current_function is not None:
+                # Label inside a function.
+
+                # Flush the expression stack before every label.
+                self.handle_void_call()
+
+                if labelname.startswith('func_end'):
+                    pass
+                else:
+                    if block_labels.has_key(labelname):
+                        for i in range(0, block_labels[labelname]):
+                            writeOutput(current_indent + ')')
+                    block_labels[labelname] = 0
+                    current_label = labelname
+            else:
+                # Label for a function.
+                assert current_function is None
+                current_function = labelname
+                writeOutput(current_indent + '(func $' + labelname)
+                current_indent += '  '
 
     def handle_void_call(self):
         if len(self.expr_stack) != 0 and self.expr_stack[0].startswith('(call'):
