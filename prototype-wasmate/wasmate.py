@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import argparse
+import cStringIO
 import re
 import sys
 
@@ -23,10 +24,39 @@ def readInput(input_file):
     return sys.stdin.read().splitlines()
   return open(input_file, 'rb').readlines()
 
-out = ''
-def writeOutput(string, newline=True):
-  global out
-  out = out + string + ('\n' if newline else '')
+class OutputWriter(object):
+    def __init__(self):
+        self.current_indent = ''
+        self.dirty = False
+        self.out = cStringIO.StringIO()
+
+    def indent(self):
+        assert not self.dirty
+        self.current_indent += '  '
+
+    def dedent(self):
+        assert not self.dirty
+        self.current_indent = self.current_indent[:-2]
+
+    def write(self, text):
+        if not self.dirty:
+            self.out.write(self.current_indent)
+        self.out.write(text)
+        self.dirty = True
+
+    def end_of_line(self):
+        self.out.write('\n')
+        self.dirty = False
+
+    def write_line(self, text):
+        assert not self.dirty
+        self.write(text)
+        self.end_of_line()
+
+    def get_output(self):
+        return self.out.getvalue()
+
+out = OutputWriter()
 
 current_pass = None
 current_line_number = 0
@@ -34,7 +64,6 @@ current_section = ".text"
 current_function = None
 current_label = None
 current_function_number = 0
-current_indent = ''
 data_labels = {}
 data_data = []
 imports = []
@@ -122,7 +151,6 @@ def handle_dot_directive(handler, command, args, rest):
     global current_function
     global current_function_number
     global current_section
-    global current_indent
 
     if command == 'text':
         current_section = ".text"
@@ -138,22 +166,21 @@ def handle_dot_directive(handler, command, args, rest):
             # variable or a function. We only want to export functions, so
             # filter out global variables.
             if args[0] not in data_labels:
-              writeOutput(current_indent + '(export "' + args[0] + '" $'
-                          + args[0] + ')')
+              out.write_line('(export "' + args[0] + '" $' + args[0] + ')')
     elif command == 'param':
         if current_pass == 'text':
-            writeOutput(current_indent + '(param ' + args[0] + ')')
+            out.write_line('(param ' + args[0] + ')')
     elif command == 'result':
         if current_pass == 'text':
-            writeOutput(current_indent + '(result ' + args[0] + ')')
+            out.write_line('(result ' + args[0] + ')')
     elif command == 'local':
         if current_pass == 'text':
-            writeOutput(current_indent + '(local ' + ' '.join(args) + ')')
+            out.write_line('(local ' + ' '.join(args) + ')')
     elif command == 'size':
         if current_pass == 'text' and current_section == '.text':
             assert args[0] == current_function
-            current_indent = current_indent[:-2]
-            writeOutput(current_indent + ')')
+            out.dedent()
+            out.write_line(')')
             current_function = None
             current_function_number += 1
     elif command == 'int8':
@@ -288,7 +315,6 @@ class TextPassHandler(PassHandler):
 
     def handle_label(self, labelname):
         global current_function
-        global current_indent
         global current_label
 
         if current_section == ".text":
@@ -303,19 +329,19 @@ class TextPassHandler(PassHandler):
                 else:
                     if block_labels.has_key(labelname):
                         for i in range(0, block_labels[labelname]):
-                            writeOutput(current_indent + ')')
+                            out.write_line(')')
                     block_labels[labelname] = 0
                     current_label = labelname
             else:
                 # Label for a function.
                 assert current_function is None
                 current_function = labelname
-                writeOutput(current_indent + '(func $' + labelname)
-                current_indent += '  '
+                out.write_line('(func $' + labelname)
+                out.indent()
 
     def handle_void_call(self):
         if len(self.expr_stack) != 0 and self.expr_stack[0].startswith('(call'):
-            writeOutput(current_indent + self.expr_stack.pop())
+            out.write_line(self.expr_stack.pop())
 
     def handle_mnemonic(self, command, args):
         # Hack: We don't know call signatures, so we don't know that void calls
@@ -332,21 +358,21 @@ class TextPassHandler(PassHandler):
                 command = split[1]
 
         if command == 'block':
-            writeOutput(current_indent + '(block ' + args[0])
+            out.write_line('(block ' + args[0])
             assert len(self.expr_stack) == 0
             push_label(args[0][1:]) # strip leading $
         elif command == 'loop':
-            writeOutput(current_indent + '(loop $' + current_label)
+            out.write_line('(loop $' + current_label)
             assert len(self.expr_stack) == 0
             push_label(args[0][1:]) # strip leading $
         elif command == 'set_local':
             assert args[1] == 'pop'
-            writeOutput(current_indent + '(set_local ' + args[0] + ' ' +
+            out.write_line('(set_local ' + args[0] + ' ' +
                         self.expr_stack.pop() + ')')
             assert len(self.expr_stack) == 0
         elif (command in ['br_if', 'br', 'switch', 'return', 'resize_memory'] or
               'store' in command):
-            writeOutput(current_indent + sexprify(command, args))
+            out.write_line(sexprify(command, args))
             assert len(self.expr_stack) == 0
         elif command == 'call' and args[0] in import_funs:
             self.expr_stack.append(sexprify('call_import', args))
@@ -386,14 +412,12 @@ def do_pass(handler, all_lines):
         current_line_number += 1
 
 def write_data_segment():
-    global current_indent
-
-    writeOutput((current_indent + '(memory ' + str(len(data_data)) + ' ' +
+    out.write_line(('(memory ' + str(len(data_data)) + ' ' +
                  str(len(data_data))))
-    current_indent += '  '
-    writeOutput(current_indent + '(segment 0')
-    current_indent += '  '
-    writeOutput(current_indent + '"', newline=False)
+    out.indent()
+    out.write_line('(segment 0')
+    out.indent()
+    out.write('"')
     for c in data_data:
         if c == '\n':
             s = '\\n'
@@ -408,23 +432,22 @@ def write_data_segment():
             s = c
         else:
           s = '\\%02x' % ord(c)
-        writeOutput(s, newline=False)
+        out.write(s)
 
-    writeOutput('"')
-    current_indent = current_indent[:-2]
-    writeOutput(current_indent + ')')
-    current_indent = current_indent[:-2]
-    writeOutput(current_indent + ')')
+    out.write('"')
+    out.end_of_line()
+    out.dedent()
+    out.write_line(')')
+    out.dedent()
+    out.write_line(')')
 
 def Main():
   cmd_args = ParseArgs()
   all_lines = readInput(cmd_args.input)
 
-  global current_indent
-
   # Open a module.
-  writeOutput(current_indent + '(module')
-  current_indent += '  '
+  out.write_line('(module')
+  out.indent()
 
   # Make three passes over the code: once to read all the data directives, once
   # to process all the text, and once for all the imports. This lets us resolve
@@ -434,24 +457,26 @@ def Main():
   do_pass(DataPassHandler(), all_lines)
   do_pass(ImportsPassHandler(), all_lines)
   for i in imports:
-      writeOutput(current_indent + '(import ' + i + ')')
+      out.write_line('(import ' + i + ')')
   do_pass(TextPassHandler(), all_lines)
 
   write_data_segment()
 
   # Close the module.
-  current_indent = current_indent[:-2]
-  writeOutput(current_indent + ')')
+  out.dedent()
+  out.write_line(')')
 
   # Check invariants.
-  assert len(current_indent) == 0
+  assert len(out.current_indent) == 0
   assert current_function == None
 
+  text = out.get_output()
+
   if cmd_args.output == None:
-    sys.stdout.write(out)
+    sys.stdout.write(text)
   else:
     with open(cmd_args.output, 'w') as outfile:
-      outfile.write(out)
+      outfile.write(text)
 
 
 if __name__ == '__main__':
