@@ -359,7 +359,7 @@ class TextPassHandler(PassHandler):
             assert len(self.expr_stack) == 0
         elif (command in ['br_if', 'br', 'switch', 'return', 'grow_memory'] or
               'store' in command):
-            assert not 'push' in args
+            assert 'push' not in args
             out.write_line(sexprify(command, args))
             assert len(self.expr_stack) == 0
         elif command == 'call' and args[0] in import_funs:
