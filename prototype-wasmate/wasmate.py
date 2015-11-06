@@ -58,11 +58,8 @@ class OutputWriter(object):
 
 out = OutputWriter()
 
-current_pass = None
 current_line_number = 0
 current_section = ".text"
-current_function = None
-current_label = None
 current_function_number = 0
 data_labels = {}
 data_data = []
@@ -119,126 +116,6 @@ def align_data_to(align):
     while len(data_data) % align != 0:
         data_data.append('\0')
 
-def handle_dot_asciz(rest):
-    if current_pass == 'data':
-        # Strip off the leading and trailing quotes.
-        assert rest[0] == '"'
-        assert rest[-1] == '"'
-        s = rest[1:-1]
-        i = 0
-        while i < len(s):
-            c = s[i]
-            if c == '\\':
-                i += 1
-                c = s[i]
-                if c == 'n':
-                    data_data.append('\n')
-                elif c == 't':
-                    data_data.append('\t')
-                elif c == '\\':
-                    data_data.append('\\')
-                elif c == '\'':
-                    data_data.append('\\')
-                else:
-                    error("unsupported escape!")
-            else:
-                data_data.append(c)
-            i = i + 1
-        data_data.append('\0')
-
-# Handle a dot directive, e.g '.foo'
-def handle_dot_directive(handler, command, args, rest):
-    global current_function
-    global current_function_number
-    global current_section
-
-    if command == 'text':
-        current_section = ".text"
-    elif command == 'data':
-        current_section = ".data"
-    elif command == 'imports':
-      current_section = 'imports'
-    elif command in ['file', 'type']:
-        pass
-    elif command == 'globl':
-        if current_pass == 'text':
-            # A .globl statement could be declaring a name for either a global
-            # variable or a function. We only want to export functions, so
-            # filter out global variables.
-            if args[0] not in data_labels:
-              out.write_line('(export "' + args[0] + '" $' + args[0] + ')')
-    elif command == 'param':
-        if current_pass == 'text':
-            out.write_line('(param ' + args[0] + ')')
-    elif command == 'result':
-        if current_pass == 'text':
-            out.write_line('(result ' + args[0] + ')')
-    elif command == 'local':
-        if current_pass == 'text':
-            out.write_line('(local ' + ' '.join(args) + ')')
-    elif command == 'size':
-        if current_pass == 'text' and current_section == '.text':
-            assert args[0] == current_function
-            out.dedent()
-            out.write_line(')')
-            current_function = None
-            current_function_number += 1
-    elif command == 'int8':
-        if current_pass == 'data':
-            x = int(args[0])
-            data_data.append(chr((x >> 0) & 255))
-    elif command == 'int16':
-        if current_pass == 'data':
-            x = int(args[0])
-            data_data.append(chr((x >> 0) & 255))
-            data_data.append(chr((x >> 8) & 255))
-    elif command == 'int32':
-        if current_pass == 'data':
-            x = int(args[0])
-            data_data.append(chr((x >> 0) & 255))
-            data_data.append(chr((x >> 8) & 255))
-            data_data.append(chr((x >> 16) & 255))
-            data_data.append(chr((x >> 24) & 255))
-    elif command == 'int64':
-        if current_pass == 'data':
-            x = int(args[0])
-            data_data.append(chr((x >> 0) & 255))
-            data_data.append(chr((x >> 8) & 255))
-            data_data.append(chr((x >> 16) & 255))
-            data_data.append(chr((x >> 24) & 255))
-            data_data.append(chr((x >> 32) & 255))
-            data_data.append(chr((x >> 40) & 255))
-            data_data.append(chr((x >> 48) & 255))
-            data_data.append(chr((x >> 56) & 255))
-    elif command == 'zero':
-        if current_pass == 'data':
-            size = int(args[0])
-            for i in range(size):
-                data_data.append('\0')
-    elif command == 'asciz':
-        # Strings can contain embedded commas, so as a hack, pass the rest
-        # of the line as a single argument.
-        handle_dot_asciz(rest)
-    elif command == 'align':
-        if current_pass == 'data':
-            align_data_to(1 << int(args[0]))
-        elif current_section == '.text':
-            error("TODO: implement .align for functions")
-    elif command == 'lcomm':
-        if current_pass == 'data':
-            name = args[0]
-            size = int(args[1])
-            align = (1 << int(args[2]))
-            align_data_to(align)
-            handler.handle_label(name)
-            for i in range(0, size):
-                data_data.append('\0')
-    elif command == 'import':
-        if current_pass == 'imports':
-            register_import(args[0])
-    else:
-        error("unknown dot command: ." + command)
-
 def resolve_label(arg):
     if arg[0] == '$' and data_labels.has_key(arg[1:]):
         return str(data_labels[arg[1:]])
@@ -274,28 +151,143 @@ def parse_line(line):
     return command, args, rest
 
 class PassHandler(object):
-    def handle_label(self, labelname):
+    def begin_pass(self):
         pass
 
-    def handle_dot_directive(self, command, args, rest):
-        handle_dot_directive(self, command, args, rest)
+    def end_pass(self):
+        pass
+
+    def handle_label(self, labelname):
+        pass
 
     def handle_mnemonic(self, command, args):
         pass
 
-class DataPassHandler(PassHandler):
-    def name(self):
-        return 'data'
+    def handle_dot_globl(self, args):
+        pass
 
+    def handle_dot_param(self, args):
+        pass
+
+    def handle_dot_result(self, args):
+        pass
+
+    def handle_dot_local(self, args):
+        pass
+
+    def handle_dot_size(self, args):
+        pass
+
+    def handle_dot_int8(self, args):
+        pass
+
+    def handle_dot_int16(self, args):
+        pass
+
+    def handle_dot_int32(self, args):
+        pass
+
+    def handle_dot_int64(self, args):
+        pass
+
+    def handle_dot_zero(self, args):
+        pass
+
+    def handle_dot_asciz(self, rest):
+        pass
+
+    def handle_dot_align(self, args):
+        if current_section == '.text':
+            error("TODO: implement .align for functions")
+
+    def handle_dot_lcomm(self, args):
+        pass
+
+    def handle_dot_import(self, args):
+        pass
+
+class DataPassHandler(PassHandler):
     def handle_label(self, labelname):
         if current_section == ".data":
-            assert current_function is None
             data_labels[labelname] = len(data_data)
 
-class ImportsPassHandler(PassHandler):
-    def name(self):
-        return 'imports'
+    def handle_dot_int8(self, args):
+        x = int(args[0])
+        data_data.append(chr((x >> 0) & 255))
 
+    def handle_dot_int16(self, args):
+        x = int(args[0])
+        data_data.append(chr((x >> 0) & 255))
+        data_data.append(chr((x >> 8) & 255))
+
+    def handle_dot_int32(self, args):
+        x = int(args[0])
+        data_data.append(chr((x >> 0) & 255))
+        data_data.append(chr((x >> 8) & 255))
+        data_data.append(chr((x >> 16) & 255))
+        data_data.append(chr((x >> 24) & 255))
+
+    def handle_dot_int64(self, args):
+        x = int(args[0])
+        data_data.append(chr((x >> 0) & 255))
+        data_data.append(chr((x >> 8) & 255))
+        data_data.append(chr((x >> 16) & 255))
+        data_data.append(chr((x >> 24) & 255))
+        data_data.append(chr((x >> 32) & 255))
+        data_data.append(chr((x >> 40) & 255))
+        data_data.append(chr((x >> 48) & 255))
+        data_data.append(chr((x >> 56) & 255))
+
+    def handle_dot_zero(self, args):
+        size = int(args[0])
+        for i in range(size):
+            data_data.append('\0')
+
+    def handle_dot_asciz(self, rest):
+        # Strip off the leading and trailing quotes.
+        assert rest[0] == '"'
+        assert rest[-1] == '"'
+        s = rest[1:-1]
+        i = 0
+        while i < len(s):
+            c = s[i]
+            if c == '\\':
+                i += 1
+                c = s[i]
+                if c == 'n':
+                    data_data.append('\n')
+                elif c == 't':
+                    data_data.append('\t')
+                elif c == '\\':
+                    data_data.append('\\')
+                elif c == '\'':
+                    data_data.append('\\')
+                else:
+                    error("unsupported escape!")
+            else:
+                data_data.append(c)
+            i = i + 1
+        data_data.append('\0')
+
+    def handle_dot_align(self, args):
+        align_data_to(1 << int(args[0]))
+
+    def handle_dot_lcomm(self, args):
+        name = args[0]
+        size = int(args[1])
+        align = (1 << int(args[2]))
+        align_data_to(align)
+        self.handle_label(name)
+        for i in range(0, size):
+            data_data.append('\0')
+
+class ImportsPassHandler(PassHandler):
+    def end_pass(self):
+        for i in imports:
+            out.write_line('(import ' + i + ')')
+
+    def handle_dot_import(self, args):
+        register_import(args[0])
 
 # Convert an instruction from mnemonic syntax to sexpr syntax.
 def sexprify(command, args):
@@ -309,16 +301,16 @@ def sexprify(command, args):
 class TextPassHandler(PassHandler):
     def __init__(self):
         self.expr_stack = []
+        self.current_function = None
+        self.current_label = None
 
-    def name(self):
-        return 'text'
+    def end_pass(self):
+        assert len(self.expr_stack) == 0
+        assert self.current_function is None
 
     def handle_label(self, labelname):
-        global current_function
-        global current_label
-
         if current_section == ".text":
-            if current_function is not None:
+            if self.current_function is not None:
                 # Label inside a function.
 
                 # Flush the expression stack before every label.
@@ -331,11 +323,11 @@ class TextPassHandler(PassHandler):
                         for i in range(0, block_labels[labelname]):
                             out.write_line(')')
                     block_labels[labelname] = 0
-                    current_label = labelname
+                    self.current_label = labelname
             else:
                 # Label for a function.
-                assert current_function is None
-                current_function = labelname
+                assert self.current_function is None
+                self.current_function = labelname
                 out.write_line('(func $' + labelname)
                 out.indent()
 
@@ -362,7 +354,7 @@ class TextPassHandler(PassHandler):
             assert len(self.expr_stack) == 0
             push_label(args[0][1:]) # strip leading $
         elif command == 'loop':
-            out.write_line('(loop $' + current_label)
+            out.write_line('(loop $' + self.current_label)
             assert len(self.expr_stack) == 0
             push_label(args[0][1:]) # strip leading $
         elif command == 'set_local':
@@ -379,19 +371,89 @@ class TextPassHandler(PassHandler):
         else:
             self.expr_stack.append(sexprify(command, args))
 
+    def handle_dot_globl(self, args):
+        # .globl statement could be declaring a name for either a global
+        # variable or a function. We only want to export functions, so
+        # filter out global variables.
+        if args[0] not in data_labels:
+            out.write_line('(export "' + args[0] + '" $' + args[0] + ')')
+
+    def handle_dot_param(self, args):
+        out.write_line('(param ' + args[0] + ')')
+
+    def handle_dot_result(self, args):
+        out.write_line('(result ' + args[0] + ')')
+
+    def handle_dot_local(self, args):
+        out.write_line('(local ' + ' '.join(args) + ')')
+
+    def handle_dot_size(self, args):
+        global current_function_number
+
+        if current_section == '.text':
+            assert args[0] == self.current_function
+            # End of function body.
+            out.dedent()
+            out.write_line(')')
+            self.current_function = None
+            current_function_number += 1
+
+
+def handle_dot_directive(handler, command, args, rest):
+    global current_function_number
+    global current_section
+
+    if command == 'text':
+        current_section = ".text"
+    elif command == 'data':
+        current_section = ".data"
+    elif command == 'imports':
+      current_section = 'imports'
+    elif command in ['file', 'type']:
+        pass
+    elif command == 'globl':
+        handler.handle_dot_globl(args)
+    elif command == 'param':
+        handler.handle_dot_param(args)
+    elif command == 'result':
+        handler.handle_dot_result(args)
+    elif command == 'local':
+        handler.handle_dot_local(args)
+    elif command == 'size':
+        handler.handle_dot_size(args)
+    elif command == 'int8':
+        handler.handle_dot_int8(args)
+    elif command == 'int16':
+        handler.handle_dot_int16(args)
+    elif command == 'int32':
+        handler.handle_dot_int32(args)
+    elif command == 'int64':
+        handler.handle_dot_int64(args)
+    elif command == 'zero':
+        handler.handle_dot_zero(args)
+    elif command == 'asciz':
+        # Strings can contain embedded commas, so as a hack, pass the rest
+        # of the line as a single argument.
+        handler.handle_dot_asciz(rest)
+    elif command == 'align':
+        handler.handle_dot_align(args)
+    elif command == 'lcomm':
+        handler.handle_dot_lcomm(args)
+    elif command == 'import':
+        handler.handle_dot_import(args)
+    else:
+        error("unknown dot command: ." + command)
 
 def do_pass(handler, all_lines):
-    global current_pass
     global current_line_number
     global current_section
-    global current_label
     global block_labels
 
-    current_pass = handler.name()
     current_line_number = 0
     current_section = ".text"
-    current_label = None
     block_labels = {}
+
+    handler.begin_pass()
 
     for line in all_lines:
         line = cleanup_line(line)
@@ -405,11 +467,13 @@ def do_pass(handler, all_lines):
                 error("label with args")
             handler.handle_label(command[:-1])
         elif command.startswith('.'):
-            handler.handle_dot_directive(command[1:], args, rest)
+            handle_dot_directive(handler, command[1:], args, rest)
         else:
             handler.handle_mnemonic(command, args)
 
         current_line_number += 1
+
+    handler.end_pass()
 
 def write_data_segment():
     out.write_line(('(memory ' + str(len(data_data)) + ' ' +
@@ -465,8 +529,6 @@ def Main():
   # call_import).
   do_pass(DataPassHandler(), all_lines)
   do_pass(ImportsPassHandler(), all_lines)
-  for i in imports:
-      out.write_line('(import ' + i + ')')
   do_pass(TextPassHandler(), all_lines)
 
   write_data_segment()
@@ -477,7 +539,6 @@ def Main():
 
   # Check invariants.
   assert len(out.current_indent) == 0
-  assert current_function == None
 
   text = out.get_output()
 
