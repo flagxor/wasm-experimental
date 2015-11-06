@@ -62,93 +62,17 @@ current_line_number = 0
 current_section = ".text"
 current_function_number = 0
 data_labels = {}
-data_data = []
-imports = []
 import_funs = []
-block_labels = {}
 
 def error(message):
     sys.stderr.write('error at line ' + str(current_line_number) + ': ' +
                      message)
     sys.exit(1)
 
-sig_element_match = re.compile(r'(\((param|result) ([^\)]+)\))')
-
-# For functions with more than one parameter, LLVM is currently generating:
-# (param i32) (param i32) (result i32)
-# when it should really be generating:
-# (param i32 i32) (result i32)
-# Do some string manipulation to fix this, but make sure we will accept the
-# correct input, too.
-def massage_import(text):
-    params = []
-    results = []
-    for _, which, types in sig_element_match.findall(text):
-        # Accumulate the types being declared.
-        if which == "param":
-            params.extend(types.split())
-        elif which == "result":
-            results.extend(types.split())
-        else:
-            raise NotImplementedError(which)
-    # Remove the original param and result declarations.
-    text = sig_element_match.sub("", text).strip()
-    # Recreate the params.
-    if params:
-        text = "%s (param %s)" % (text, " ".join(params))
-    # Recreate the results.
-    if results:
-        text = "%s (result %s)" % (text, " ".join(results))
-    return text
-
-def register_import(i):
-    i = massage_import(i)
-    imports.append(i)
-    import_funs.append(i[0:i.find(' ')])
-
-def push_label(label):
-    if block_labels.has_key(label):
-        block_labels[label] += 1
-    else:
-        block_labels[label] = 1
-
-def align_data_to(align):
-    while len(data_data) % align != 0:
-        data_data.append('\0')
-
 def resolve_label(arg):
     if arg[0] == '$' and data_labels.has_key(arg[1:]):
         return str(data_labels[arg[1:]])
     return arg
-
-def cleanup_line(line):
-    # Traslate '# BB#0:' comments into proper BBx_0: labels. This hack is
-    # needed because loops in LLVM output reference the block after the
-    # loop, which LLVM doesn't emit a proper label for if it's only
-    # reachable by fallthrough.
-    if line.startswith('# BB#'):
-        line = 'BB' + str(current_function_number) + '_' + line[5:]
-
-    # Strip comments.
-    x = line.find('#')
-    if x != -1:
-        line = line[0:x]
-    return line.strip()
-
-def parse_line(line):
-    # Split out the first part of the line, which determines what we do.
-    parts = line.split(None, 1)
-    command = parts[0]
-
-    # The rest of the line is comma-separated args.
-    if len(parts) > 1:
-        rest = parts[1]
-        args = [x.strip() for x in rest.split(',')]
-    else:
-        rest = ''
-        args = []
-
-    return command, args, rest
 
 class PassHandler(object):
     def begin_pass(self):
@@ -207,41 +131,48 @@ class PassHandler(object):
         pass
 
 class DataPassHandler(PassHandler):
+    def __init__(self, data):
+        self.data = data
+
+    def align_data_to(self, align):
+        while len(self.data) % align != 0:
+            self.data.append('\0')
+
     def handle_label(self, labelname):
         if current_section == ".data":
-            data_labels[labelname] = len(data_data)
+            data_labels[labelname] = len(self.data)
 
     def handle_dot_int8(self, args):
         x = int(args[0])
-        data_data.append(chr((x >> 0) & 255))
+        self.data.append(chr((x >> 0) & 255))
 
     def handle_dot_int16(self, args):
         x = int(args[0])
-        data_data.append(chr((x >> 0) & 255))
-        data_data.append(chr((x >> 8) & 255))
+        self.data.append(chr((x >> 0) & 255))
+        self.data.append(chr((x >> 8) & 255))
 
     def handle_dot_int32(self, args):
         x = int(args[0])
-        data_data.append(chr((x >> 0) & 255))
-        data_data.append(chr((x >> 8) & 255))
-        data_data.append(chr((x >> 16) & 255))
-        data_data.append(chr((x >> 24) & 255))
+        self.data.append(chr((x >> 0) & 255))
+        self.data.append(chr((x >> 8) & 255))
+        self.data.append(chr((x >> 16) & 255))
+        self.data.append(chr((x >> 24) & 255))
 
     def handle_dot_int64(self, args):
         x = int(args[0])
-        data_data.append(chr((x >> 0) & 255))
-        data_data.append(chr((x >> 8) & 255))
-        data_data.append(chr((x >> 16) & 255))
-        data_data.append(chr((x >> 24) & 255))
-        data_data.append(chr((x >> 32) & 255))
-        data_data.append(chr((x >> 40) & 255))
-        data_data.append(chr((x >> 48) & 255))
-        data_data.append(chr((x >> 56) & 255))
+        self.data.append(chr((x >> 0) & 255))
+        self.data.append(chr((x >> 8) & 255))
+        self.data.append(chr((x >> 16) & 255))
+        self.data.append(chr((x >> 24) & 255))
+        self.data.append(chr((x >> 32) & 255))
+        self.data.append(chr((x >> 40) & 255))
+        self.data.append(chr((x >> 48) & 255))
+        self.data.append(chr((x >> 56) & 255))
 
     def handle_dot_zero(self, args):
         size = int(args[0])
         for i in range(size):
-            data_data.append('\0')
+            self.data.append('\0')
 
     def handle_dot_asciz(self, rest):
         # Strip off the leading and trailing quotes.
@@ -255,39 +186,73 @@ class DataPassHandler(PassHandler):
                 i += 1
                 c = s[i]
                 if c == 'n':
-                    data_data.append('\n')
+                    self.data.append('\n')
                 elif c == 't':
-                    data_data.append('\t')
+                    self.data.append('\t')
                 elif c == '\\':
-                    data_data.append('\\')
+                    self.data.append('\\')
                 elif c == '\'':
-                    data_data.append('\\')
+                    self.data.append('\\')
                 else:
                     error("unsupported escape!")
             else:
-                data_data.append(c)
+                self.data.append(c)
             i = i + 1
-        data_data.append('\0')
+        self.data.append('\0')
 
     def handle_dot_align(self, args):
-        align_data_to(1 << int(args[0]))
+        self.align_data_to(1 << int(args[0]))
 
     def handle_dot_lcomm(self, args):
         name = args[0]
         size = int(args[1])
         align = (1 << int(args[2]))
-        align_data_to(align)
+        self.align_data_to(align)
         self.handle_label(name)
         for i in range(0, size):
-            data_data.append('\0')
+            self.data.append('\0')
+
+sig_element_match = re.compile(r'(\((param|result) ([^\)]+)\))')
+
+# For functions with more than one parameter, LLVM is currently generating:
+# (param i32) (param i32) (result i32)
+# when it should really be generating:
+# (param i32 i32) (result i32)
+# Do some string manipulation to fix this, but make sure we will accept the
+# correct input, too.
+def massage_import(text):
+    params = []
+    results = []
+    for _, which, types in sig_element_match.findall(text):
+        # Accumulate the types being declared.
+        if which == "param":
+            params.extend(types.split())
+        elif which == "result":
+            results.extend(types.split())
+        else:
+            raise NotImplementedError(which)
+    # Remove the original param and result declarations.
+    text = sig_element_match.sub("", text).strip()
+    # Recreate the params.
+    if params:
+        text = "%s (param %s)" % (text, " ".join(params))
+    # Recreate the results.
+    if results:
+        text = "%s (result %s)" % (text, " ".join(results))
+    return text
 
 class ImportsPassHandler(PassHandler):
+    def __init__(self):
+        self.imports = []
+
     def end_pass(self):
-        for i in imports:
+        for i in self.imports:
             out.write_line('(import ' + i + ')')
 
     def handle_dot_import(self, args):
-        register_import(args[0])
+        i = massage_import(args[0])
+        self.imports.append(i)
+        import_funs.append(i[0:i.find(' ')])
 
 # Convert an instruction from mnemonic syntax to sexpr syntax.
 def sexprify(command, args):
@@ -303,6 +268,13 @@ class TextPassHandler(PassHandler):
         self.expr_stack = []
         self.current_function = None
         self.current_label = None
+        self.block_labels = {}
+
+    def push_label(self, label):
+        if label in self.block_labels:
+            self.block_labels[label] += 1
+        else:
+            self.block_labels[label] = 1
 
     def end_pass(self):
         assert len(self.expr_stack) == 0
@@ -315,10 +287,10 @@ class TextPassHandler(PassHandler):
                 if labelname.startswith('func_end'):
                     pass
                 else:
-                    if block_labels.has_key(labelname):
-                        for i in range(0, block_labels[labelname]):
+                    if labelname in self.block_labels:
+                        for i in range(0, self.block_labels[labelname]):
                             out.write_line(')')
-                    block_labels[labelname] = 0
+                    self.block_labels[labelname] = 0
                     self.current_label = labelname
             else:
                 # Label for a function.
@@ -339,11 +311,11 @@ class TextPassHandler(PassHandler):
         if command == 'block':
             out.write_line('(block ' + args[0])
             assert len(self.expr_stack) == 0
-            push_label(args[0][1:]) # strip leading $
+            self.push_label(args[0][1:]) # strip leading $
         elif command == 'loop':
             out.write_line('(loop $' + self.current_label)
             assert len(self.expr_stack) == 0
-            push_label(args[0][1:]) # strip leading $
+            self.push_label(args[0][1:]) # strip leading $
         elif command == 'set_local':
             assert args[1] == 'pop'
             out.write_line('(set_local ' + args[0] + ' ' +
@@ -394,9 +366,36 @@ class TextPassHandler(PassHandler):
             self.current_function = None
             current_function_number += 1
 
+def cleanup_line(line):
+    # Traslate '# BB#0:' comments into proper BBx_0: labels. This hack is
+    # needed because loops in LLVM output reference the block after the
+    # loop, which LLVM doesn't emit a proper label for if it's only
+    # reachable by fallthrough.
+    if line.startswith('# BB#'):
+        line = 'BB' + str(current_function_number) + '_' + line[5:]
+
+    # Strip comments.
+    x = line.find('#')
+    if x != -1:
+        line = line[0:x]
+    return line.strip()
+
+def parse_line(line):
+    # Split out the first part of the line, which determines what we do.
+    parts = line.split(None, 1)
+    command = parts[0]
+
+    # The rest of the line is comma-separated args.
+    if len(parts) > 1:
+        rest = parts[1]
+        args = [x.strip() for x in rest.split(',')]
+    else:
+        rest = ''
+        args = []
+
+    return command, args, rest
 
 def handle_dot_directive(handler, command, args, rest):
-    global current_function_number
     global current_section
 
     if command == 'text':
@@ -443,11 +442,9 @@ def handle_dot_directive(handler, command, args, rest):
 def do_pass(handler, all_lines):
     global current_line_number
     global current_section
-    global block_labels
 
     current_line_number = 0
     current_section = ".text"
-    block_labels = {}
 
     handler.begin_pass()
 
@@ -471,14 +468,14 @@ def do_pass(handler, all_lines):
 
     handler.end_pass()
 
-def write_data_segment():
-    out.write_line(('(memory ' + str(len(data_data)) + ' ' +
-                 str(len(data_data))))
+def write_data_segment(data):
+    out.write_line(('(memory ' + str(len(data)) + ' ' +
+                 str(len(data))))
     out.indent()
     out.write_line('(segment 0')
     out.indent()
     out.write('"')
-    for c in data_data:
+    for c in data:
         if c == '\n':
             s = '\\n'
         elif c == '\t':
@@ -518,16 +515,18 @@ def Main():
   out.write_line('(module')
   out.indent()
 
+  data = []
+
   # Make three passes over the code: once to read all the data directives, once
   # to process all the text, and once for all the imports. This lets us resolve
   # all the data symbols so we can plug in absolute offsets into the text, while
   # having all the imports on top (which then lets us transform call to
   # call_import).
-  do_pass(DataPassHandler(), all_lines)
+  do_pass(DataPassHandler(data), all_lines)
   do_pass(ImportsPassHandler(), all_lines)
   do_pass(TextPassHandler(), all_lines)
 
-  write_data_segment()
+  write_data_segment(data)
 
   # Close the module.
   out.dedent()
