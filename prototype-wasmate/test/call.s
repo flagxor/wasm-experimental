@@ -5,7 +5,7 @@
 call_i32_nullary:
 	.result i32
 	.local i32
-	call $i32_nullary
+	call $i32_nullary, push
 	set_local 0, pop
 	return (get_local 0)
 func_end0:
@@ -16,7 +16,7 @@ func_end0:
 call_i64_nullary:
 	.result i64
 	.local i64
-	call $i64_nullary
+	call $i64_nullary, push
 	set_local 0, pop
 	return (get_local 0)
 func_end1:
@@ -27,7 +27,7 @@ func_end1:
 call_float_nullary:
 	.result f32
 	.local f32
-	call $float_nullary
+	call $float_nullary, push
 	set_local 0, pop
 	return (get_local 0)
 func_end2:
@@ -38,7 +38,7 @@ func_end2:
 call_double_nullary:
 	.result f64
 	.local f64
-	call $double_nullary
+	call $double_nullary, push
 	set_local 0, pop
 	return (get_local 0)
 func_end3:
@@ -58,9 +58,9 @@ call_i32_unary:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	call $i32_unary, (get_local 1)
+	call $i32_unary, push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end5:
@@ -73,11 +73,11 @@ call_i32_binary:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	call $i32_binary, (get_local 3), (get_local 2)
+	call $i32_binary, push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end6:
@@ -88,7 +88,7 @@ func_end6:
 call_indirect_void:
 	.param i32
 	.local i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
 	void.call_indirect (get_local 1)
 	return
@@ -101,9 +101,9 @@ call_indirect_i32:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.call_indirect (get_local 1)
+	i32.call_indirect (get_local 1), push
 	set_local 2, pop
 	return (get_local 2)
 func_end8:

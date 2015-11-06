@@ -7,7 +7,7 @@ unused_first:
 	.param i32
 	.result i32
 	.local i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
 	return (get_local 2)
 func_end0:
@@ -20,7 +20,7 @@ unused_second:
 	.param i32
 	.result i32
 	.local i32
-	get_local 0
+	get_local push, 0
 	set_local 2, pop
 	return (get_local 2)
 func_end1:

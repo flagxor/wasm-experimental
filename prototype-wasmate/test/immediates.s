@@ -5,7 +5,7 @@
 zero_i32:
 	.result i32
 	.local i32
-	i32.const 0
+	i32.const push, 0
 	set_local 0, pop
 	return (get_local 0)
 func_end0:
@@ -16,7 +16,7 @@ func_end0:
 one_i32:
 	.result i32
 	.local i32
-	i32.const 1
+	i32.const push, 1
 	set_local 0, pop
 	return (get_local 0)
 func_end1:
@@ -27,7 +27,7 @@ func_end1:
 max_i32:
 	.result i32
 	.local i32
-	i32.const 2147483647
+	i32.const push, 2147483647
 	set_local 0, pop
 	return (get_local 0)
 func_end2:
@@ -38,7 +38,7 @@ func_end2:
 min_i32:
 	.result i32
 	.local i32
-	i32.const -2147483648
+	i32.const push, -2147483648
 	set_local 0, pop
 	return (get_local 0)
 func_end3:
@@ -49,7 +49,7 @@ func_end3:
 zero_i64:
 	.result i64
 	.local i64
-	i64.const 0
+	i64.const push, 0
 	set_local 0, pop
 	return (get_local 0)
 func_end4:
@@ -60,7 +60,7 @@ func_end4:
 one_i64:
 	.result i64
 	.local i64
-	i64.const 1
+	i64.const push, 1
 	set_local 0, pop
 	return (get_local 0)
 func_end5:
@@ -71,7 +71,7 @@ func_end5:
 max_i64:
 	.result i64
 	.local i64
-	i64.const 9223372036854775807
+	i64.const push, 9223372036854775807
 	set_local 0, pop
 	return (get_local 0)
 func_end6:
@@ -82,7 +82,7 @@ func_end6:
 min_i64:
 	.result i64
 	.local i64
-	i64.const -9223372036854775808
+	i64.const push, -9223372036854775808
 	set_local 0, pop
 	return (get_local 0)
 func_end7:
@@ -93,7 +93,7 @@ func_end7:
 negzero_f32:
 	.result f32
 	.local f32
-	f32.const -0x0p0
+	f32.const push, -0x0p0
 	set_local 0, pop
 	return (get_local 0)
 func_end8:
@@ -104,7 +104,7 @@ func_end8:
 zero_f32:
 	.result f32
 	.local f32
-	f32.const 0x0p0
+	f32.const push, 0x0p0
 	set_local 0, pop
 	return (get_local 0)
 func_end9:
@@ -115,7 +115,7 @@ func_end9:
 one_f32:
 	.result f32
 	.local f32
-	f32.const 0x1p0
+	f32.const push, 0x1p0
 	set_local 0, pop
 	return (get_local 0)
 func_end10:
@@ -126,7 +126,7 @@ func_end10:
 two_f32:
 	.result f32
 	.local f32
-	f32.const 0x1p1
+	f32.const push, 0x1p1
 	set_local 0, pop
 	return (get_local 0)
 func_end11:
@@ -137,7 +137,7 @@ func_end11:
 nan_f32:
 	.result f32
 	.local f32
-	f32.const nan
+	f32.const push, nan
 	set_local 0, pop
 	return (get_local 0)
 func_end12:
@@ -148,7 +148,7 @@ func_end12:
 negnan_f32:
 	.result f32
 	.local f32
-	f32.const -nan
+	f32.const push, -nan
 	set_local 0, pop
 	return (get_local 0)
 func_end13:
@@ -159,7 +159,7 @@ func_end13:
 inf_f32:
 	.result f32
 	.local f32
-	f32.const infinity
+	f32.const push, infinity
 	set_local 0, pop
 	return (get_local 0)
 func_end14:
@@ -170,7 +170,7 @@ func_end14:
 neginf_f32:
 	.result f32
 	.local f32
-	f32.const -infinity
+	f32.const push, -infinity
 	set_local 0, pop
 	return (get_local 0)
 func_end15:
@@ -181,7 +181,7 @@ func_end15:
 negzero_f64:
 	.result f64
 	.local f64
-	f64.const -0x0p0
+	f64.const push, -0x0p0
 	set_local 0, pop
 	return (get_local 0)
 func_end16:
@@ -192,7 +192,7 @@ func_end16:
 zero_f64:
 	.result f64
 	.local f64
-	f64.const 0x0p0
+	f64.const push, 0x0p0
 	set_local 0, pop
 	return (get_local 0)
 func_end17:
@@ -203,7 +203,7 @@ func_end17:
 one_f64:
 	.result f64
 	.local f64
-	f64.const 0x1p0
+	f64.const push, 0x1p0
 	set_local 0, pop
 	return (get_local 0)
 func_end18:
@@ -214,7 +214,7 @@ func_end18:
 two_f64:
 	.result f64
 	.local f64
-	f64.const 0x1p1
+	f64.const push, 0x1p1
 	set_local 0, pop
 	return (get_local 0)
 func_end19:
@@ -225,7 +225,7 @@ func_end19:
 nan_f64:
 	.result f64
 	.local f64
-	f64.const nan
+	f64.const push, nan
 	set_local 0, pop
 	return (get_local 0)
 func_end20:
@@ -236,7 +236,7 @@ func_end20:
 negnan_f64:
 	.result f64
 	.local f64
-	f64.const -nan
+	f64.const push, -nan
 	set_local 0, pop
 	return (get_local 0)
 func_end21:
@@ -247,7 +247,7 @@ func_end21:
 inf_f64:
 	.result f64
 	.local f64
-	f64.const infinity
+	f64.const push, infinity
 	set_local 0, pop
 	return (get_local 0)
 func_end22:
@@ -258,7 +258,7 @@ func_end22:
 neginf_f64:
 	.result f64
 	.local f64
-	f64.const -infinity
+	f64.const push, -infinity
 	set_local 0, pop
 	return (get_local 0)
 func_end23:

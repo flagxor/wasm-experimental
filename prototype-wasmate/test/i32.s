@@ -7,11 +7,11 @@ add32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.add (get_local 3), (get_local 2)
+	i32.add push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end0:
@@ -24,11 +24,11 @@ sub32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.sub (get_local 3), (get_local 2)
+	i32.sub push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end1:
@@ -41,11 +41,11 @@ mul32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.mul (get_local 3), (get_local 2)
+	i32.mul push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end2:
@@ -58,11 +58,11 @@ sdiv32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.div_s (get_local 3), (get_local 2)
+	i32.div_s push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end3:
@@ -75,11 +75,11 @@ udiv32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.div_u (get_local 3), (get_local 2)
+	i32.div_u push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end4:
@@ -92,11 +92,11 @@ srem32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.rem_s (get_local 3), (get_local 2)
+	i32.rem_s push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end5:
@@ -109,11 +109,11 @@ urem32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.rem_u (get_local 3), (get_local 2)
+	i32.rem_u push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end6:
@@ -126,11 +126,11 @@ and32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.and (get_local 3), (get_local 2)
+	i32.and push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end7:
@@ -143,11 +143,11 @@ or32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.or (get_local 3), (get_local 2)
+	i32.or push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end8:
@@ -160,11 +160,11 @@ xor32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.xor (get_local 3), (get_local 2)
+	i32.xor push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end9:
@@ -177,11 +177,11 @@ shl32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.shl (get_local 3), (get_local 2)
+	i32.shl push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end10:
@@ -194,11 +194,11 @@ shr32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.shr_u (get_local 3), (get_local 2)
+	i32.shr_u push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end11:
@@ -211,11 +211,11 @@ sar32:
 	.param i32
 	.result i32
 	.local i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	i32.shr_s (get_local 3), (get_local 2)
+	i32.shr_s push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end12:
@@ -227,9 +227,9 @@ clz32:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.clz (get_local 1)
+	i32.clz push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end13:
@@ -241,9 +241,9 @@ clz32_zero_undef:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.clz (get_local 1)
+	i32.clz push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end14:
@@ -255,9 +255,9 @@ ctz32:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.ctz (get_local 1)
+	i32.ctz push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end15:
@@ -269,9 +269,9 @@ ctz32_zero_undef:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.ctz (get_local 1)
+	i32.ctz push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end16:
@@ -283,9 +283,9 @@ popcnt32:
 	.param i32
 	.result i32
 	.local i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.popcnt (get_local 1)
+	i32.popcnt push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end17:

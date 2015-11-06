@@ -7,15 +7,15 @@ ord_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32, i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 2, pop
-	get_local 1
+	get_local push, 1
 	set_local 3, pop
-	f64.eq (get_local 3), (get_local 3)
+	f64.eq push, (get_local 3), (get_local 3)
 	set_local 4, pop
-	f64.eq (get_local 2), (get_local 2)
+	f64.eq push, (get_local 2), (get_local 2)
 	set_local 5, pop
-	i32.and (get_local 5), (get_local 4)
+	i32.and push, (get_local 5), (get_local 4)
 	set_local 6, pop
 	return (get_local 6)
 func_end0:
@@ -28,15 +28,15 @@ uno_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32, i32, i32
-	get_local 0
+	get_local push, 0
 	set_local 2, pop
-	get_local 1
+	get_local push, 1
 	set_local 3, pop
-	f64.ne (get_local 3), (get_local 3)
+	f64.ne push, (get_local 3), (get_local 3)
 	set_local 4, pop
-	f64.ne (get_local 2), (get_local 2)
+	f64.ne push, (get_local 2), (get_local 2)
 	set_local 5, pop
-	i32.or (get_local 5), (get_local 4)
+	i32.or push, (get_local 5), (get_local 4)
 	set_local 6, pop
 	return (get_local 6)
 func_end1:
@@ -49,11 +49,11 @@ oeq_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.eq (get_local 3), (get_local 2)
+	f64.eq push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end2:
@@ -66,11 +66,11 @@ une_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.ne (get_local 3), (get_local 2)
+	f64.ne push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end3:
@@ -83,11 +83,11 @@ olt_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.lt (get_local 3), (get_local 2)
+	f64.lt push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end4:
@@ -100,11 +100,11 @@ ole_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.le (get_local 3), (get_local 2)
+	f64.le push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end5:
@@ -117,11 +117,11 @@ ogt_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.gt (get_local 3), (get_local 2)
+	f64.gt push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end6:
@@ -134,11 +134,11 @@ oge_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.ge (get_local 3), (get_local 2)
+	f64.ge push, (get_local 3), (get_local 2)
 	set_local 4, pop
 	return (get_local 4)
 func_end7:
@@ -151,19 +151,19 @@ ueq_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32, i32, i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.eq (get_local 3), (get_local 2)
+	f64.eq push, (get_local 3), (get_local 2)
 	set_local 4, pop
-	f64.ne (get_local 2), (get_local 2)
+	f64.ne push, (get_local 2), (get_local 2)
 	set_local 5, pop
-	f64.ne (get_local 3), (get_local 3)
+	f64.ne push, (get_local 3), (get_local 3)
 	set_local 6, pop
-	i32.or (get_local 6), (get_local 5)
+	i32.or push, (get_local 6), (get_local 5)
 	set_local 7, pop
-	i32.or (get_local 4), (get_local 7)
+	i32.or push, (get_local 4), (get_local 7)
 	set_local 8, pop
 	return (get_local 8)
 func_end8:
@@ -176,19 +176,19 @@ one_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32, i32, i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.ne (get_local 3), (get_local 2)
+	f64.ne push, (get_local 3), (get_local 2)
 	set_local 4, pop
-	f64.eq (get_local 2), (get_local 2)
+	f64.eq push, (get_local 2), (get_local 2)
 	set_local 5, pop
-	f64.eq (get_local 3), (get_local 3)
+	f64.eq push, (get_local 3), (get_local 3)
 	set_local 6, pop
-	i32.and (get_local 6), (get_local 5)
+	i32.and push, (get_local 6), (get_local 5)
 	set_local 7, pop
-	i32.and (get_local 4), (get_local 7)
+	i32.and push, (get_local 4), (get_local 7)
 	set_local 8, pop
 	return (get_local 8)
 func_end9:
@@ -201,19 +201,19 @@ ult_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32, i32, i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.lt (get_local 3), (get_local 2)
+	f64.lt push, (get_local 3), (get_local 2)
 	set_local 4, pop
-	f64.ne (get_local 2), (get_local 2)
+	f64.ne push, (get_local 2), (get_local 2)
 	set_local 5, pop
-	f64.ne (get_local 3), (get_local 3)
+	f64.ne push, (get_local 3), (get_local 3)
 	set_local 6, pop
-	i32.or (get_local 6), (get_local 5)
+	i32.or push, (get_local 6), (get_local 5)
 	set_local 7, pop
-	i32.or (get_local 4), (get_local 7)
+	i32.or push, (get_local 4), (get_local 7)
 	set_local 8, pop
 	return (get_local 8)
 func_end10:
@@ -226,19 +226,19 @@ ule_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32, i32, i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.le (get_local 3), (get_local 2)
+	f64.le push, (get_local 3), (get_local 2)
 	set_local 4, pop
-	f64.ne (get_local 2), (get_local 2)
+	f64.ne push, (get_local 2), (get_local 2)
 	set_local 5, pop
-	f64.ne (get_local 3), (get_local 3)
+	f64.ne push, (get_local 3), (get_local 3)
 	set_local 6, pop
-	i32.or (get_local 6), (get_local 5)
+	i32.or push, (get_local 6), (get_local 5)
 	set_local 7, pop
-	i32.or (get_local 4), (get_local 7)
+	i32.or push, (get_local 4), (get_local 7)
 	set_local 8, pop
 	return (get_local 8)
 func_end11:
@@ -251,19 +251,19 @@ ugt_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32, i32, i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.gt (get_local 3), (get_local 2)
+	f64.gt push, (get_local 3), (get_local 2)
 	set_local 4, pop
-	f64.ne (get_local 2), (get_local 2)
+	f64.ne push, (get_local 2), (get_local 2)
 	set_local 5, pop
-	f64.ne (get_local 3), (get_local 3)
+	f64.ne push, (get_local 3), (get_local 3)
 	set_local 6, pop
-	i32.or (get_local 6), (get_local 5)
+	i32.or push, (get_local 6), (get_local 5)
 	set_local 7, pop
-	i32.or (get_local 4), (get_local 7)
+	i32.or push, (get_local 4), (get_local 7)
 	set_local 8, pop
 	return (get_local 8)
 func_end12:
@@ -276,19 +276,19 @@ uge_f64:
 	.param f64
 	.result i32
 	.local f64, f64, i32, i32, i32, i32, i32
-	get_local 1
+	get_local push, 1
 	set_local 2, pop
-	get_local 0
+	get_local push, 0
 	set_local 3, pop
-	f64.ge (get_local 3), (get_local 2)
+	f64.ge push, (get_local 3), (get_local 2)
 	set_local 4, pop
-	f64.ne (get_local 2), (get_local 2)
+	f64.ne push, (get_local 2), (get_local 2)
 	set_local 5, pop
-	f64.ne (get_local 3), (get_local 3)
+	f64.ne push, (get_local 3), (get_local 3)
 	set_local 6, pop
-	i32.or (get_local 6), (get_local 5)
+	i32.or push, (get_local 6), (get_local 5)
 	set_local 7, pop
-	i32.or (get_local 4), (get_local 7)
+	i32.or push, (get_local 4), (get_local 7)
 	set_local 8, pop
 	return (get_local 8)
 func_end13:

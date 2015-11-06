@@ -6,7 +6,7 @@ main:                                   # @main
 	.result i32
 	.local i32
 # BB#0:                                 # %entry
-	i32.const 0
+	i32.const push, 0
 	set_local 0, pop
 	call $exit, (get_local 0)
 func_end0:

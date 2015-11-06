@@ -7,7 +7,7 @@ f:                                      # @f
 	.result i32
 	.local i32
 # BB#0:
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
 	return (get_local 1)
 func_end0:

@@ -6,9 +6,9 @@ i32_wrap_i64:
 	.param i64
 	.result i32
 	.local i64, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.wrap/i64 (get_local 1)
+	i32.wrap/i64 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end0:
@@ -20,9 +20,9 @@ i64_extend_s_i32:
 	.param i32
 	.result i64
 	.local i32, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.extend_s/i32 (get_local 1)
+	i64.extend_s/i32 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end1:
@@ -34,9 +34,9 @@ i64_extend_u_i32:
 	.param i32
 	.result i64
 	.local i32, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.extend_u/i32 (get_local 1)
+	i64.extend_u/i32 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end2:
@@ -48,9 +48,9 @@ i32_trunc_s_f32:
 	.param f32
 	.result i32
 	.local f32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.trunc_s/f32 (get_local 1)
+	i32.trunc_s/f32 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end3:
@@ -62,9 +62,9 @@ i32_trunc_u_f32:
 	.param f32
 	.result i32
 	.local f32, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.trunc_u/f32 (get_local 1)
+	i32.trunc_u/f32 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end4:
@@ -76,9 +76,9 @@ i32_trunc_s_f64:
 	.param f64
 	.result i32
 	.local f64, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.trunc_s/f64 (get_local 1)
+	i32.trunc_s/f64 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end5:
@@ -90,9 +90,9 @@ i32_trunc_u_f64:
 	.param f64
 	.result i32
 	.local f64, i32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i32.trunc_u/f64 (get_local 1)
+	i32.trunc_u/f64 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end6:
@@ -104,9 +104,9 @@ i64_trunc_s_f32:
 	.param f32
 	.result i64
 	.local f32, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.trunc_s/f32 (get_local 1)
+	i64.trunc_s/f32 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end7:
@@ -118,9 +118,9 @@ i64_trunc_u_f32:
 	.param f32
 	.result i64
 	.local f32, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.trunc_u/f32 (get_local 1)
+	i64.trunc_u/f32 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end8:
@@ -132,9 +132,9 @@ i64_trunc_s_f64:
 	.param f64
 	.result i64
 	.local f64, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.trunc_s/f64 (get_local 1)
+	i64.trunc_s/f64 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end9:
@@ -146,9 +146,9 @@ i64_trunc_u_f64:
 	.param f64
 	.result i64
 	.local f64, i64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	i64.trunc_u/f64 (get_local 1)
+	i64.trunc_u/f64 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end10:
@@ -160,9 +160,9 @@ f32_convert_s_i32:
 	.param i32
 	.result f32
 	.local i32, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.convert_s/i32 (get_local 1)
+	f32.convert_s/i32 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end11:
@@ -174,9 +174,9 @@ f32_convert_u_i32:
 	.param i32
 	.result f32
 	.local i32, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.convert_u/i32 (get_local 1)
+	f32.convert_u/i32 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end12:
@@ -188,9 +188,9 @@ f64_convert_s_i32:
 	.param i32
 	.result f64
 	.local i32, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.convert_s/i32 (get_local 1)
+	f64.convert_s/i32 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end13:
@@ -202,9 +202,9 @@ f64_convert_u_i32:
 	.param i32
 	.result f64
 	.local i32, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.convert_u/i32 (get_local 1)
+	f64.convert_u/i32 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end14:
@@ -216,9 +216,9 @@ f32_convert_s_i64:
 	.param i64
 	.result f32
 	.local i64, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.convert_s/i64 (get_local 1)
+	f32.convert_s/i64 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end15:
@@ -230,9 +230,9 @@ f32_convert_u_i64:
 	.param i64
 	.result f32
 	.local i64, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.convert_u/i64 (get_local 1)
+	f32.convert_u/i64 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end16:
@@ -244,9 +244,9 @@ f64_convert_s_i64:
 	.param i64
 	.result f64
 	.local i64, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.convert_s/i64 (get_local 1)
+	f64.convert_s/i64 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end17:
@@ -258,9 +258,9 @@ f64_convert_u_i64:
 	.param i64
 	.result f64
 	.local i64, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.convert_u/i64 (get_local 1)
+	f64.convert_u/i64 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end18:
@@ -272,9 +272,9 @@ f64_promote_f32:
 	.param f32
 	.result f64
 	.local f32, f64
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f64.promote/f32 (get_local 1)
+	f64.promote/f32 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end19:
@@ -286,9 +286,9 @@ f32_demote_f64:
 	.param f64
 	.result f32
 	.local f64, f32
-	get_local 0
+	get_local push, 0
 	set_local 1, pop
-	f32.demote/f64 (get_local 1)
+	f32.demote/f64 push, (get_local 1)
 	set_local 2, pop
 	return (get_local 2)
 func_end20:
