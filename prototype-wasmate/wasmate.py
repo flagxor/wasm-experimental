@@ -64,9 +64,11 @@ current_function_number = 0
 data_labels = {}
 import_funs = []
 
-def error(message):
-    sys.stderr.write('error at line ' + str(current_line_number) + ': ' +
-                     message)
+def error(message, line_number=None):
+    if line_number is None:
+        line_number = current_line_number
+    sys.stderr.write('error at line ' + str(line_number) + ': ' +
+                     message + '\n')
     sys.exit(1)
 
 def resolve_label(arg):
@@ -130,9 +132,28 @@ class PassHandler(object):
     def handle_dot_import(self, args):
         pass
 
+def reduce_to_bytes(x, num_bytes):
+    data = []
+    while num_bytes > 0:
+        data.append(chr(x & 255))
+        x >>= 8
+        num_bytes -= 1
+    assert x == 0 or x == -1
+    return data
+
 class DataPassHandler(PassHandler):
     def __init__(self, data):
         self.data = data
+        self.reloc = []
+
+    def end_pass(self):
+        # Fix up relocations.
+        for pos, num_bytes, symbol, line_number in self.reloc:
+            if symbol in data_labels:
+                b = reduce_to_bytes(data_labels[symbol], num_bytes)
+                self.data[pos:pos + num_bytes] = b
+            else:
+                error("can't resolve symbol %r" % symbol, line_number)
 
     def align_data_to(self, align):
         while len(self.data) % align != 0:
@@ -142,32 +163,26 @@ class DataPassHandler(PassHandler):
         if current_section == ".data":
             data_labels[labelname] = len(self.data)
 
+    def handle_dot_intx(self, arg, num_bytes):
+        try:
+            x = int(arg)
+        except ValueError:
+            # It's a symbol, fix it up later.
+            x = 0
+            self.reloc.append((len(self.data), num_bytes, arg, current_line_number))
+        self.data.extend(reduce_to_bytes(x, num_bytes))
+
     def handle_dot_int8(self, args):
-        x = int(args[0])
-        self.data.append(chr((x >> 0) & 255))
+        self.handle_dot_intx(args[0], 1)
 
     def handle_dot_int16(self, args):
-        x = int(args[0])
-        self.data.append(chr((x >> 0) & 255))
-        self.data.append(chr((x >> 8) & 255))
+        self.handle_dot_intx(args[0], 2)
 
     def handle_dot_int32(self, args):
-        x = int(args[0])
-        self.data.append(chr((x >> 0) & 255))
-        self.data.append(chr((x >> 8) & 255))
-        self.data.append(chr((x >> 16) & 255))
-        self.data.append(chr((x >> 24) & 255))
+        self.handle_dot_intx(args[0], 4)
 
     def handle_dot_int64(self, args):
-        x = int(args[0])
-        self.data.append(chr((x >> 0) & 255))
-        self.data.append(chr((x >> 8) & 255))
-        self.data.append(chr((x >> 16) & 255))
-        self.data.append(chr((x >> 24) & 255))
-        self.data.append(chr((x >> 32) & 255))
-        self.data.append(chr((x >> 40) & 255))
-        self.data.append(chr((x >> 48) & 255))
-        self.data.append(chr((x >> 56) & 255))
+        self.handle_dot_intx(args[0], 8)
 
     def handle_dot_zero(self, args):
         size = int(args[0])
@@ -449,6 +464,7 @@ def do_pass(handler, all_lines):
     handler.begin_pass()
 
     for line in all_lines:
+        current_line_number += 1 # First line is "1" in most editors.
         line = cleanup_line(line)
         if not line:
             continue
@@ -463,8 +479,6 @@ def do_pass(handler, all_lines):
             handle_dot_directive(handler, command[1:], args, rest)
         else:
             handler.handle_mnemonic(command, args)
-
-        current_line_number += 1
 
     handler.end_pass()
 
