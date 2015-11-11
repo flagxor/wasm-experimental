@@ -283,13 +283,16 @@ class TextPassHandler(PassHandler):
         self.expr_stack = []
         self.current_function = None
         self.current_label = None
-        self.block_labels = {}
+        self.ends_at_label = {}
 
-    def push_label(self, label):
-        if label in self.block_labels:
-            self.block_labels[label] += 1
-        else:
-            self.block_labels[label] = 1
+    def close_block(self, label):
+        out.dedent()
+        out.write_line(')')
+
+    def block_ends_at(self, block_label, end_label):
+        if end_label not in self.ends_at_label:
+            self.ends_at_label[end_label] = []
+        self.ends_at_label[end_label].append(block_label)
 
     def end_pass(self):
         assert len(self.expr_stack) == 0
@@ -298,14 +301,17 @@ class TextPassHandler(PassHandler):
     def handle_label(self, labelname):
         if current_section == ".text":
             if self.current_function is not None:
+                # Check to see if we need to close any blocks.
+                if labelname in self.ends_at_label:
+                    # Multiple blocks and loops may end at a label.
+                    ending = self.ends_at_label.pop(labelname)
+                    while ending:
+                        self.close_block(ending.pop())
+
                 # Label inside a function.
                 if labelname.startswith('func_end'):
                     pass
                 else:
-                    if labelname in self.block_labels:
-                        for i in range(0, self.block_labels[labelname]):
-                            out.write_line(')')
-                    self.block_labels[labelname] = 0
                     self.current_label = labelname
             else:
                 # Label for a function.
@@ -324,13 +330,24 @@ class TextPassHandler(PassHandler):
                 command = split[1]
 
         if command == 'block':
-            out.write_line('(block ' + args[0])
+            # Blocks end at the label you jump to.
+            label = args[0][1:] # strip leading $
+            out.write_line('(block $' + label)
+            out.indent()
             assert len(self.expr_stack) == 0
-            self.push_label(args[0][1:]) # strip leading $
+            self.block_ends_at(label, label)
         elif command == 'loop':
+            # The label you jump to is before the loop, the label the loop ends
+            # at is after the loop.
+            # This creates an inconsistency between LLVM and sexprs where LLVM
+            # declares "begin: loop $end ... end: ..." but sexprs declare
+            # "(loop $begin ...)", the nature of the argument to the "loop"
+            # command differs.
+            label = args[0][1:] # strip leading $
             out.write_line('(loop $' + self.current_label)
+            out.indent()
             assert len(self.expr_stack) == 0
-            self.push_label(args[0][1:]) # strip leading $
+            self.block_ends_at(self.current_label, label)
         elif command == 'set_local':
             assert args[1] == 'pop'
             out.write_line('(set_local ' + args[0] + ' ' +
@@ -375,9 +392,9 @@ class TextPassHandler(PassHandler):
 
         if current_section == '.text':
             assert args[0] == self.current_function
+            assert not self.ends_at_label, self.ends_at_label
             # End of function body.
-            out.dedent()
-            out.write_line(')')
+            self.close_block('$' + self.current_function)
             self.current_function = None
             current_function_number += 1
 
@@ -547,7 +564,7 @@ def Main():
   out.write_line(')')
 
   # Check invariants.
-  assert len(out.current_indent) == 0
+  assert len(out.current_indent) == 0, out.get_output()
 
   text = out.get_output()
 

@@ -52,6 +52,7 @@ BB1_1:
 	get_local push, 2
 	set_local 10, pop
 	br_if $BB1_1, (get_local 9)
+# BB#2:
 	return (get_local 11)
 func_end1:
 	.size	test1, func_end1-test1

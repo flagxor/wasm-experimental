@@ -247,6 +247,7 @@ BB7_1:
 	loop $BB7_2
 	i32.store (get_local 1), (get_local 3)
 	br $BB7_1
+# BB#2:
 func_end7:
 	.size	minimal_loop, func_end7-minimal_loop
 
@@ -272,6 +273,7 @@ BB8_1:
 	loop $BB8_2
 	i32.store (get_local 2), (get_local 7)
 	br_if $BB8_1, (get_local 6)
+# BB#2:
 	i32.const push, 2
 	set_local 8, pop
 	i32.store (get_local 2), (get_local 8)
@@ -383,7 +385,6 @@ BB11_1:
 BB11_2:
 	loop $BB11_5
 	block $BB11_4
-	block $BB11_2
 	i32.eq push, (get_local 5), (get_local 2)
 	set_local 4, pop
 BB11_3:
@@ -395,6 +396,7 @@ BB11_3:
 BB11_4:
 	call $bar
 	br $BB11_2
+# BB#5:
 func_end11:
 	.size	test3, func_end11-test3
 
