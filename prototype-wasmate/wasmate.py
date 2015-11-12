@@ -365,6 +365,9 @@ class TextPassHandler(PassHandler):
             else:
                 out.write_line(line)
         else:
+            # HACK to work around http://reviews.llvm.org/D14587
+            if command == 'global':
+                command = 'i32.const'
             line = sexprify(command, args)
             if 'push' in args:
                 self.expr_stack.append(line)
